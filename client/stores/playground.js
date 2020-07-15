@@ -4,15 +4,15 @@ import compile from "../compiler/compiler";
 
 import { id, fetchFrom } from "../utils/utils";
 
-/** 
+/**
  * These methods should be extracted in the future to common.js
  * However there is more to understand about how Webpack builds JS modules
- * there was a runtime error at hydrateJSONcomponent which I couldn't 
- * figure out in time for the user study, so I rolled it back. 
+ * there was a runtime error at hydrateJSONcomponent which I couldn't
+ * figure out in time for the user study, so I rolled it back.
  * hence there is duplicate code in tutorial and playground stores
  * [FB20200527]
  */
-// import { hydrateJSONcomponent, storable } from "../stores/common"; 
+// import { hydrateJSONcomponent, storable } from "../stores/common";
 
 import gridHelp from "svelte-grid/build/helper/index.mjs";
 
@@ -25,6 +25,8 @@ import Analyser from "../components/widgets/Analyser.svelte";
 import StoreInspector from "../components/widgets/StoreInspector.svelte";
 import DSPCodeOutput from "../components/widgets/DSPCodeOutput.svelte";
 import PostIt from "../components/widgets/PostIt.svelte";
+//importing sequencer
+import Sequencer from "../components/widgets/Sequencer.svelte";
 
 import default_grammar from "../../assets/languages/default/grammar.ne";
 import gabber_grammar from "../../assets/languages/gabber/grammar.ne";
@@ -151,6 +153,16 @@ export const sidebarVisualisationOptions = [
 
 export const isAddAnalyserDisabled = writable(false);
 
+
+//for sequencer
+export const sidebarSequencerOptions = [
+	{ id: 0, text: `Sequencing`, content: "" },
+	{ id: 1, text: `+ Audio Sequencer`, content: "" },
+];
+
+export const isAddSequencerDisabled = writable(false);
+
+
 export const editorThemes = [
 	{ id: 0, text: `Change Theme...`, content: "" },
 	{ id: 1, text: `cobalt`, content: cm_theme_cobalt },
@@ -204,7 +216,7 @@ export const editorThemes = [
 /*******                                        ********/
 /*******                                        ********/
 /*******   Playground Dashboard Items Stores    ********/
-/*******                                        ********/ 
+/*******                                        ********/
 
 
 const originalItems = [
@@ -237,6 +249,21 @@ const originalItems = [
 			mode: "both",
 		},
 	},
+
+	{
+		...gridHelp.item({ x: 9, y: 0, w: 3, h: 3, id: id() }),
+		...{
+			name: "hello world",
+			type: "sequencer",
+			lineNumbers: true,
+			hasFocus: false,
+			theme: "monokai",
+			background: "#f0f0f0",
+			component: Sequencer,
+			mode: "both",
+		},
+	},
+
 
 	{
 		...gridHelp.item({ x: 9, y: 0, w: 18, h: 3, id: id() }),
@@ -399,7 +426,7 @@ export let createRandomItem = (type) => {
 
 
 // export const populateStoresWithFetchedProps = async (newItem) => {
-  
+
 //   if(newItem.type === 'liveCodeEditor')
 //     try{
 //       newItem.data = await fetchFrom(newItem.liveCodeSource);
@@ -413,7 +440,7 @@ export let createRandomItem = (type) => {
 //       console.error("Error Populating stores with fetched liveCode props")
 //     }
 //   else if (newItem.type === 'grammarEditor')
-//     grammarEditorValue.set(item.data);    
+//     grammarEditorValue.set(item.data);
 // }
 
 
@@ -433,7 +460,7 @@ export async function createNewItem (type, content){
 				liveCodeSource: content.livecode,
 				data: content.code,
 			};
-      // await populateStoresWithFetchedProps(component); 
+      // await populateStoresWithFetchedProps(component);
 			break;
 		case "grammarEditor":
 			component = {
@@ -476,6 +503,12 @@ export async function createNewItem (type, content){
 				background: "#ffffff",
 				mode: "",
 			};
+		case "sequencer":
+			component = {
+				component: Sequencer,
+				background: "#ffffff",
+				mode: "",
+			};
 			break;
 		case "postIt":
 			component = {
@@ -496,8 +529,9 @@ export async function createNewItem (type, content){
   let itemId = id();
 
 	// return component template
+  //when a new component is made
 	return {
-		...gridHelp.item({ x: 0, y: 0, w: 7, h: 3, id: itemId }),
+		...gridHelp.item({ x: 0, y: 0, w: 7, h: 7, id: itemId }),
 		...{
 			type: type,
 			name: type + itemId,
@@ -614,23 +648,23 @@ export function setFocused(item){
   try {
     let itemProperties = [];
     if( item.type === "liveCodeEditor" || item.type === "grammarEditor" || item.type === 'modelEditor' ){
-      itemProperties = [ item.lineNumbers, item.theme ];     
+      itemProperties = [ item.lineNumbers, item.theme ];
 
       if( item.type === "liveCodeEditor" ){
         // itemProperties.push(item.grammar);
-      } 
+      }
     }
     else if(item.type === 'analyser'){
       itemProperties.push(item.mode)
-    } 
-    focusedItemProperties.set(itemProperties);    
+    }
+    focusedItemProperties.set(itemProperties);
 
     items.update(
-			(itemsToUpdate) => { 
-        itemsToUpdate.map( 
-          itemToUnfocus => ({ 
+			(itemsToUpdate) => {
+        itemsToUpdate.map(
+          itemToUnfocus => ({
             ...itemToUnfocus,
-            ...{ hasFocus: false } 
+            ...{ hasFocus: false }
           })
         )
       }
@@ -645,7 +679,7 @@ export function setFocused(item){
 
     // items.set(itemsUnfocused);
     // items = itemsUnfocused);
-    
+
     //set focused item
     item.hasFocus = true;
   	focusedItem.set(item);
@@ -653,7 +687,7 @@ export function setFocused(item){
   catch(error){
     console.error("Error Playground.setFocused: setting item focusesd" );
   };
-} 
+}
 
 
 export function clearFocused(){
@@ -662,7 +696,3 @@ export function clearFocused(){
   focusedItemProperties.set([]);
 
 }
-
-
-
-

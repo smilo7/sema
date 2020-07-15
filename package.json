@@ -28,7 +28,8 @@
     "marked": "^0.8.2",
     "nearley": "^2.19.0",
     "rxfire": "^3.12.2",
-    "rxjs": "^6.5.5"
+    "rxjs": "^6.5.5",
+    "three": "0.118.3"
   },
   "devDependencies": {
     "@sveltech/routify": "^1.7.12",

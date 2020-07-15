@@ -1,6 +1,6 @@
 <script>
 	import { onMount, createEventDispatcher } from 'svelte';
-	
+
   import { get } from 'svelte/store';
 
   import Grid from "svelte-grid";
@@ -28,7 +28,7 @@
   export let rowHeight;
   export let gap;
 
-  const types = ['liveCodeEditor', 'modelEditor', 'grammarEditor', 'liveCodeParseOutput', 'grammarCompileOutput', 'analyser'];
+  const types = ['liveCodeEditor', 'modelEditor', 'grammarEditor', 'liveCodeParseOutput', 'grammarCompileOutput', 'analyser', 'sequencer'];
   const itype = () => types[Math.floor(Math.random() * types.length)];
 
   const themes = ['monokai', 'cobalt', 'icecoder', 'shadowfox' ];
@@ -55,19 +55,19 @@
   }
 
   const onAdjust = e => {
-    // console.log("DEBUG:dashboard:onAdjust:", e.detail); 
+    // console.log("DEBUG:dashboard:onAdjust:", e.detail);
     $items = $items; // call a re-render
   };
 
   const onChildMount = e => {
-    // console.log("DEBUG:dashboard:onChildMount:", e.detail); 
+    // console.log("DEBUG:dashboard:onChildMount:", e.detail);
     // $items = $items; // call a re-render
   };
 
 	const update = (item, prop, value) => {
-    dispatch('update', { 
+    dispatch('update', {
       item,
-      prop, 
+      prop,
       value
     });
 	}
@@ -85,9 +85,9 @@
     remove.bind(null, item); // remove dashboard item binding
     delete item.component;
     $items = $items.filter( i => i.id !== item.id);
-    
-    console.log("DEBUG:dashboard:remove:"); 
-    console.log($items); 
+
+    console.log("DEBUG:dashboard:remove:");
+    console.log($items);
   }
 
 

@@ -52,6 +52,14 @@ module.exports = {
 		publicPath: "/", // this is required for the client-side router to set relative paths from '/'
 		globalObject: `(typeof self !== 'undefined' ? self : this)`,
 	},
+	// resolve: {
+  //   alias: {
+  //     three$: 'three/build/three.min.js',
+  //     'three/.*$': 'three',
+  //      // don't need to register alias for every module
+  //   },
+  //   // ...
+	// },
 	module: {
 		rules: [
 			// {
@@ -243,8 +251,14 @@ module.exports = {
 	},
 	mode,
 	plugins: [
+
 		new webpack.ProgressPlugin(),
 		// new Serve(serveOptions), // alternative to webpack-dev-server
+
+		// new webpack.ProvidePlugin({
+    //   THREE: 'three',
+    //   // ...
+    // }),
 		new LiveReloadPlugin({
 			protocol: "http",
 			port: 5001,

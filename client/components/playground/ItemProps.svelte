@@ -6,7 +6,7 @@
     sidebarLiveCodeOptions,
     selectedLiveCodeOption,
     isSelectLiveCodeEditorDisabled,
-    
+
     sidebarModelOptions,
     selectedModelOption,
     isSelectModelEditorDisabled,
@@ -18,7 +18,7 @@
 
     sidebarDebuggerOptions,
     selectedDebuggerOption,
-    isSelectDebuggerDisabled, 
+    isSelectDebuggerDisabled,
     // sidebarVisualisationOptions,
 
     focusedItem,
@@ -57,16 +57,16 @@
       // case 'live':
       //   messaging.publish("playground-add", { type: 'liveCodeEditor', data: selected.content });
       //   $selectedLiveCodeOption = $sidebarLiveCodeOptions[0];
-      //   $isSelectLiveCodeEditorDisabled = true;         
+      //   $isSelectLiveCodeEditorDisabled = true;
       //   break;
       // case 'model':
       //   messaging.publish("playground-add", { type: 'modelEditor', data: selected.content });
       //   $selectedModelOption = $sidebarModelOptions[0];
-      //   $isSelectModelEditorDisabled = true;        
+      //   $isSelectModelEditorDisabled = true;
       //   break;
       case 'grammar':
         messaging.publish("playground-add", { type: 'grammarEditor', data: { grammar: $focusedItemProperties[2].grammar, grammarSource: $focusedItem.grammarSource }});
-        
+
         // selectedGrammarOption = sidebarGrammarOptions[0];
         $isAddGrammarEditorDisabled = true;
         break;
@@ -76,8 +76,8 @@
       //   break;
       // case 'debugger':
       //   messaging.publish("playground-add", { type: selected.type });
-      //   disableSelectDebuggerOption(selected.type);       
-      //   $selectedDebuggerOption = $sidebarDebuggerOptions[0];  
+      //   disableSelectDebuggerOption(selected.type);
+      //   $selectedDebuggerOption = $sidebarDebuggerOptions[0];
       //   break;
       default:
         break;
@@ -109,10 +109,10 @@
 
   /* .checkbox-span {
     color: whitesmoke;
-    margin-left: 20px; 
+    margin-left: 20px;
   } */
   /* .checkbox-input {
-    margin-left: 5px; 
+    margin-left: 5px;
   } */
 
   /* The checkbox container */
@@ -176,7 +176,7 @@
     padding: 0.7em 1em 0.7em 1em;
     /* width: 100%; */
     width: 10em;
-    max-width: 100%; 
+    max-width: 100%;
     box-sizing: border-box;
     border: 0 solid #333;
     text-align: left;
@@ -214,7 +214,7 @@
     padding: 0.7em 1em 0.7em 1em;
     /* width: 100%; */
     width: 10em;
-    max-width: 100%; 
+    max-width: 100%;
     box-sizing: border-box;
     border: 0 solid #333;
     text-align: left;
@@ -254,7 +254,7 @@
     padding: 0.7em 0em 0.7em 1em;
     /* width: 100%; */
     width: 10em;
-    max-width: 100%; 
+    max-width: 100%;
     box-sizing: border-box;
     border: 0 solid #333;
     text-align: left;
@@ -316,17 +316,17 @@
                 >
                 Restart
         </button>
-        <br> 
+        <br>
       </div>
       <!-- {:else if itemProp.debug }
         <div class="controls">
-          <select class="combobox-dark" 
-                  bind:value={ $selectedDebuggerOption } 
-                  on:change={ () => dispatchAdd('debugger', $selectedDebuggerOption) } 
-                  on:click={ () => $sidebarDebuggerOptions[0].disabled = true  }  
+          <select class="combobox-dark"
+                  bind:value={ $selectedDebuggerOption }
+                  on:change={ () => dispatchAdd('debugger', $selectedDebuggerOption) }
+                  on:click={ () => $sidebarDebuggerOptions[0].disabled = true  }
                   >
             {#each $sidebarDebuggerOptions as debuggerOption}
-              <option disabled={ debuggerOption.disabled } 
+              <option disabled={ debuggerOption.disabled }
                       value={ debuggerOption }
                       >
                 { debuggerOption.text }
