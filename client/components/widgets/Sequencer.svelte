@@ -3,7 +3,10 @@
 	const dispatch = createEventDispatcher();
 
   import { PubSub } from '../../messaging/pubSub.js';
-  import * as THREE from '../../sequencer/three.js';
+  //import * as THREE from '../../sequencer/three.js';
+	var THREE = require('three')
+	var OrbitControls = require('three-orbit-controls')(THREE)
+
 	//import OrbitControls from '../../sequencer/controls/OrbitControls.js';
   let messaging = new PubSub();
 
@@ -46,7 +49,7 @@
 	{
 			//let drawContext = canvas.getContext('webgl');
 			//let drawContext = document.querySelector("#glCanvas");
-			renderer = new THREE.WebGLRenderer( { canvas: canvas } );
+			renderer = new THREE.WebGLRenderer( { canvas: canvas, antialias: true} );
 	    //var width = window.innerWidth;
 	    //var height = window.innerHeight;
 
@@ -60,10 +63,11 @@
 	    makeCylinder();
 	    setCamera(width, height);
 	    //makeSomething();
-	    cubeCylinder();
+	    //cubeCylinder();
 
 
 	    //controls = new THREE.OrbitControls (camera, renderer.domElement);
+			controls = new OrbitControls (camera, renderer.domElement);
 
 	    var gridXZ = new THREE.GridHelper(100, 10);
 	    gridXZ.setColors( new THREE.Color(0xff0000), new THREE.Color(0xffffff) );
@@ -157,7 +161,7 @@
 
 	function animate()
 	{
-	    //controls.update();
+	    controls.update();
 	    requestAnimationFrame ( animate );
 	    renderer.render (scene, camera);
 
