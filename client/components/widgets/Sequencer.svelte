@@ -6,7 +6,6 @@
   //import * as THREE from '../../sequencer/three.js';
 	var THREE = require('three')
 	var OrbitControls = require('three-orbit-controls')(THREE)
-
 	//import OrbitControls from '../../sequencer/controls/OrbitControls.js';
   let messaging = new PubSub();
 
@@ -45,6 +44,10 @@
 	var cube;
 	var controls;
 
+//colors
+	var selectionColor = new THREE.Color( 0xff0000 );
+
+
 	function init()
 	{
 			//let drawContext = canvas.getContext('webgl');
@@ -60,40 +63,96 @@
 
 	    scene = new THREE.Scene();
 
-	    makeCylinder();
+	    //makeCylinder(5,5);
+			var cylinder = new Cylinder(0,10,0,false);
 	    setCamera(width, height);
-	    //makeSomething();
+	    makeGrid();
 	    //cubeCylinder();
-
 
 	    //controls = new THREE.OrbitControls (camera, renderer.domElement);
 			controls = new OrbitControls (camera, renderer.domElement);
 
-	    var gridXZ = new THREE.GridHelper(100, 10);
-	    gridXZ.setColors( new THREE.Color(0xff0000), new THREE.Color(0xffffff) );
-	    scene.add(gridXZ);
+	}
 
-	    //raycaster
-	    let raycaster = new THREE.Raycaster();
-	    let mouse = new THREE.Vector2();
+	//for selecting cylinders :)
+	class PickHelper {
+		constructor(){
+			this.raycaster = new THREE.Raycaster();
+			this.pickedObject = null;
+			this.pickedObjectSavedColor = 0;
+			this.faceIdx1 = -1, this.faceIdx2 = -1; //selected face ids
+		}
 
+		pick(normalisedPosition, scene, camera){
+			// restore the color if there is a picked object
+		  if (this.pickedObject != null && this.pickedObject.geometry.type == 'CylinderGeometry') {
+		    this.pickedObject.material.color.setHex(this.pickedObjectSavedColor);
+		    this.pickedObject = null;
+			}
+
+			this.raycaster.setFromCamera(normalisedPosition, camera)
+			// get the list of objects the ray intersected
+	    const intersectedObjects = this.raycaster.intersectObjects(scene.children);
+	    if (intersectedObjects.length > 0) {
+
+
+				// pick the first object. It's the closest one
+	      this.pickedObject = intersectedObjects[0].object;
+				if (this.pickedObject.geometry.type == 'CylinderGeometry'){
+					this.faceIdx1 = intersectedObjects[0].faceIndex;
+					this.faceIdx2 = this.faceIdx1 % 2 === 0 ? this.faceIdx1 + 1: this.faceIdx1 - 1;
+					setFaceColor(this.faceIdx1, selectionColor, this.pickedObject);
+					setFaceColor(this.faceIdx2, selectionColor, this.pickedObject);
+		      // save its color
+		      this.pickedObjectSavedColor = this.pickedObject.material.color.getHex();
+		      // set its emissive color to yellow
+					//this.pickedObject.material.color.setHex(0xFFFF00);
+				}
+	    }
+		}
+	}
+
+	function setFaceColor(idx, color, obj){
+	  if (idx === -1) return;
+		console.log(obj.geometry.faces[idx]);
+		//console.log(color)
+		obj.geometry.elementsNeedUpdate = true;
+		obj.geometry.colorsNeedUpdate = true;
+		obj.geometry.vertexColors = true;
+		console.log(obj.geometry.faces[idx].color)
+	  obj.geometry.faces[idx].color.copy(color);
+		obj.geometry.faces[idx].color
 
 	}
 
-	function makeSomething(){
-	    var geom = new THREE.Geometry();
-	    var v1 = new THREE.Vector3(0,0,0);
-	    var v2 = new THREE.Vector3(0,500,0);
-	    var v3 = new THREE.Vector3(0,500,500);
+	//returns x and y dict of canvas relative pos
+	function getCanvasRelativePosition(event){
+		const canvasRect = canvas.getBoundingClientRect(); //returns size of canvas relative to viewport
+		return {
+			x: (event.clientX - canvasRect.left) * canvas.width / canvasRect.width,
+			y: (event.clientY - canvasRect.top) * canvas.height / canvasRect.height
+		};
+	}
 
-	    geom.vertices.push(v1);
-	    geom.vertices.push(v2);
-	    geom.vertices.push(v3);
+	function setPickPosition(event){
+		const pos = getCanvasRelativePosition(event);
+		pickPosition.x = (pos.x / canvas.width) * 2 - 1;
+		pickPosition.y = (pos.y / canvas.height) * -2 + 1;
+	}
 
-	    geom.faces.push( new THREE.Face3( 0, 1, 2 ) );
+	function clearPickPosition() {
+	  // unlike the mouse which always has a position
+	  // if the user stops touching the screen we want
+	  // to stop picking. For now we just pick a value
+	  // unlikely to pick something
+	  pickPosition.x = -100000;
+	  pickPosition.y = -100000;
+	}
 
-	    var object = new THREE.Mesh( geom, new THREE.MeshNormalMaterial() );
-	    scene.add(object);
+	function makeGrid(){
+		let gridXZ = new THREE.GridHelper(100, 10);
+		gridXZ.setColors( new THREE.Color(0xff0000), new THREE.Color(0xffffff) );
+		scene.add(gridXZ);
 	}
 
 	//returns lineSegments object (this can be added to the scene)
@@ -114,25 +173,47 @@
 	    return line
 	}
 
-	function cubeCylinder(){
-	    for(var i = 0; i < 20; i++) {
-	        var geometry = new THREE.BoxGeometry( 5, 5, 5 );
-	        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-	        var cube = new THREE.Mesh( geometry, material );
+	//utils
+	function rand(min, max) {
+    if (max === undefined) {
+      max = min;
+      min = 0;
+    }
+    return min + (max - min) * Math.random();
+  }
 
-	        let angle = (i / (10/2)) * Math.PI;
-	        cube .position.x = (50 * Math.cos(angle));
-	        cube .position.z = (50 * Math.sin(angle));
-	        cube .position.y = 5;
-	        scene.add(cube);
-	    }
+	function randomColor() {
+    return `hsl(${rand(360) | 0}, ${rand(50, 100) | 0}%, 50%)`;
+  }
+
+
+	class Cylinder {
+		constructor (x, y, z, edges=true){
+			//spawn location of cylinder
+			this.x = x;
+			this.y = y;
+			this.geometry = new THREE.CylinderGeometry( 5, 5, 20, 8, 6 );
+			this.material = new THREE.MeshBasicMaterial( {color: 0xcc66ff, vertexColors: THREE.VertexColors } );
+			this.mesh = new THREE.Mesh(this.geometry, this.material);
+			this.mesh.position.set(x,y,z);
+
+			//edges
+			if (edges){
+				this.edges = displayWireFrame(this.geometry);
+		    this.edges.position.set(x,y,z);
+				scene.add(this.edges);
+			}
+
+			//add to scene
+			scene.add(this.mesh);
+		}
+
 	}
-
-	function makeCylinder(){
+	function makeCylinder(x,y){
 	    //CYLINDER
-	    var cylinderGeometry = new THREE.CylinderGeometry( 5, 5, 20, 8, 6 );
-	    var cylinderMaterial = new THREE.MeshBasicMaterial( {color: 0xcc66ff} );
-
+	    var cylinderGeometry = new THREE.CylinderGeometry( x, y, 20, 8, 6 );
+	    //var cylinderMaterial = new THREE.MeshBasicMaterial( {color: 0xcc66ff} );
+			var cylinderMaterial = new THREE.MeshPhongMaterial( {color: randomColor()} );
 	    var cylinder = new THREE.Mesh( cylinderGeometry, cylinderMaterial );
 	    cylinder.position.set(0,10,0);
 
@@ -159,10 +240,22 @@
 	}
 
 
+
+	//picking stuff
+	const pickPosition = {x: 0, y: 0};
+	const pickHelper = new PickHelper();
+	clearPickPosition();
+
+	window.addEventListener('mousemove', setPickPosition);
+	window.addEventListener('mouseout', clearPickPosition);
+	window.addEventListener('mouseleave', clearPickPosition);
+	//window.addEventListener('mouseDown', )
+
 	function animate()
 	{
-	    controls.update();
 	    requestAnimationFrame ( animate );
+			controls.update();
+			pickHelper.pick(pickPosition, scene, camera);
 	    renderer.render (scene, camera);
 
 	}
