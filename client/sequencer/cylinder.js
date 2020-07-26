@@ -1,8 +1,10 @@
 var THREE = require('three')
+import {Peg} from '../sequencer/peg.js';
 
 class Cylinder {
   constructor (scene, x, y, z, edges=true){
     //spawn location of cylinder
+    this.scene = scene;
     this.rotationSpeed = 0;
     this.x = x;
     this.y = y;
@@ -15,10 +17,20 @@ class Cylinder {
     if (edges){
       this.edges = displayWireFrame(this.geometry);
       this.edges.position.set(x,y,z);
-      scene.add(this.edges);
+      this.scene.add(this.edges);
     }
     //add to scene
-    scene.add(this.mesh);
+    this.scene.add(this.mesh);
+
+    this.pegs = [];
+  }
+
+  get uuid(){
+    return this.geometry.uuid;
+  }
+
+  addPeg(x, y, z){
+    this.pegs.push(new Peg(this.scene, 3,3,3, x,y,z));
   }
 
 }

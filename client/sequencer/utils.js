@@ -19,7 +19,7 @@ export function setFaceColor(idx, color, obj){
 }
 
 //returns x and y dict of canvas relative pos
-function getCanvasRelativePosition(event){
+export function getCanvasRelativePosition(canvas){
 	const canvasRect = canvas.getBoundingClientRect(); //returns size of canvas relative to viewport
 	return {
 		x: (event.clientX - canvasRect.left) * canvas.width / canvasRect.width,
@@ -27,10 +27,12 @@ function getCanvasRelativePosition(event){
 	};
 }
 
-function setPickPosition(event){
-	const pos = getCanvasRelativePosition(event);
+export function setPickPosition(canvas, pickPosition){
+	const pos = getCanvasRelativePosition(canvas);
 	pickPosition.x = (pos.x / canvas.width) * 2 - 1;
 	pickPosition.y = (pos.y / canvas.height) * -2 + 1;
+  console.log(pickPosition);
+  return pickPosition;
 }
 
 function clearPickPosition() {
@@ -53,4 +55,12 @@ function rand(min, max) {
 
 function randomColor() {
   return `hsl(${rand(360) | 0}, ${rand(50, 100) | 0}%, 50%)`;
+}
+
+export function meanOfList(dict){
+  var sum = 0;
+  for( var i = 0; i < dict.length; i++ ){
+      sum += parseInt( dict[i], 10 ); //don't forget to add the base
+  }
+  var avg = sum/dict.length;
 }

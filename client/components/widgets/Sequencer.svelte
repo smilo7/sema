@@ -79,14 +79,14 @@ mainSeq<script>
   }
 
 	//make instance of mainSeq (sequencer main class)
-	var mainSeq = new MainSeq(canvas);
+	var mainSeq = new MainSeq();
 	//console.log("here", canvas);
 	//console.log("here", mainSeq.canvas);
 
 	window.addEventListener('mousemove', setPickPosition);
 	window.addEventListener('mouseout', clearPickPosition);
 	window.addEventListener('mouseleave', clearPickPosition);
-	window.addEventListener('mousedown', setPickPosition);
+	//window.addEventListener('mousedown', setPickPosition);
 
   onMount(async () => {
     // Request the creation of an WAAPI analyser to the Audio Engine

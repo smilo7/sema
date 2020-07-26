@@ -5,12 +5,14 @@ import {PickHelper} from '../sequencer/mouseStuff.js';
 //import * as utils from '../sequencer/utils.js';
 import {Cylinder} from '../sequencer/cylinder.js';
 import {Communicator} from '../sequencer/communicator.js';
+import {getCanvasRelativePosition, setPickPosition} from '../sequencer/utils.js';
+import {KeyboardControls} from '../sequencer/keyboardControls.js';
 
 class MainSeq {
-  constructor(canvas){
-    if (MainSeq.instance) return MainSeq.instance; // Singleton pattern
-		MainSeq.instance = this;
-    this.canvas = canvas;
+  constructor(){
+    //if (MainSeq.instance) return MainSeq.instance; // Singleton pattern
+		//MainSeq.instance = this;
+    this.canvas;
     this.scene, this.renderer, this.camera;
     this.controls;
     //mouse picking stuff
@@ -18,14 +20,22 @@ class MainSeq {
     this.pickHelper = new PickHelper();
     //this.clearPickPosition();
 
+    //musical objects
+    this.cylinders = [];
+
     //Communicator
     this.communicator =  new Communicator();
-    //this.communicator.createSAB("mxy", "mouseXY", 2, this.audioWorkletNode.port)
+    //this.communicator.createSAB("collision", "collisionTrigger", 1, this.audioWorkletNode.port)
   }
 
   get getCanvas(){
     return this.canvas;
   }
+
+  set setCanvass(canvas){
+    this.canvas = canvas;
+  }
+
 
   //give the sequencer a canvas to draw to
   setCanvas(canvas){
@@ -51,19 +61,72 @@ class MainSeq {
     this.renderer.setSize (width, height);
     //document.body.appendChild (renderer.domElement);
     this.scene = new THREE.Scene();
-		var cylinder = new Cylinder(this.scene, 0,10,0,true);
+		var cylinder = new Cylinder(this.scene, 0,10,0,false);
 		var cylinder2 = new Cylinder(this.scene, 20,10,0,false);
-		var cylinder2 = new Cylinder(this.scene, -30,10,-20,false);
+		var cylinder3 = new Cylinder(this.scene, -30,10,-20,true);
+
+    this.cylinders.push(cylinder, cylinder2, cylinder3); //add to store
+
     this.setCamera(width, height);
     makeGrid(this.scene);
     //controls = new THREE.OrbitControls (camera, renderer.domElement);
 		this.controls = new OrbitControls (this.camera, this.renderer.domElement);
+    this.keyboardControls = new KeyboardControls(this.renderer.domElement);
+    //listeners
+    //this.renderer.domElement.addEventListener("mouseup", this.onMouseUp(this.canvas), false);
+    this.renderer.domElement.addEventListener("mousedown", e => {
+      //this.onMouseDown(e.clientX, e.clientY, this.scene);
+      this.onMouseDown();
+    });
+
+    console.log(this.canvas);
   }
+
+  onMouseDown(){
+    // console.log("here we go", x, y);
+    // console.log("blah", this.pickPosition);
+    // console.log(this.scene, scene);
+    let raycastReturn = this.pickHelper.place(this.pickPosition, this.scene, this.camera);
+    let selectedUUID = raycastReturn[0];
+    let middleOfSelectedFace = raycastReturn[1];
+    //loop through list of cylinders
+    //TODO replace this with a dict so its faster
+    for (let i=0;i<this.cylinders.length;i++){
+      //console.log("selected",selectedUUID);
+      //console.log("all",this.cylinders[i].uuid);
+      if (selectedUUID === this.cylinders[i].uuid){
+        let selectedCylinder = this.cylinders[i];
+        console.log("clicked", this.cylinders[i].uuid);
+
+        console.log(middleOfSelectedFace);
+
+        //selectedCylinder.geometry.vertices[raycastReturn[1]]
+
+        selectedCylinder.addPeg(middleOfSelectedFace.x, middleOfSelectedFace.y, middleOfSelectedFace.z);
+      }
+    }
+    //var asdasd = new Cylinder(scene, 10,10,20,false);
+  }
+
+
+  onMouseUp(canvas){
+    console.log(this.canvas);
+    //var self = this;
+    console.log(canvas);
+    console.log("mouseup");
+    //console.log(this.getCanvas());
+
+    //console.log(temp);
+    let pos = setPickPosition(this.canvas, this.pickPosition);
+    this.pickHelper.place(pos, this.scene, this.camera);
+  }
+
+
 
   updateEverything(){
     this.controls.update();
 		this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
-    this.pickHelper.place(this.pickPosition, this.scene, this.camera);
+    //this.pickHelper.place(this.pickPosition, this.scene, this.camera);
     this.renderer.render(this.scene, this.camera);
   }
   // animate() {

@@ -11,7 +11,12 @@ class Communicator {
 			return Communicator.instance; // Singleton pattern
 	}
 		Communicator.instance = this;
+
+
+    this.sabs = [];
 	}
+
+
 
 	createSAB(chID, ttype, blocksize, port) {
 	  let sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
