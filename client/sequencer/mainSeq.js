@@ -63,6 +63,8 @@ class MainSeq {
     makeGrid(this.scene);
 		this.controls = new OrbitControls (this.camera, this.renderer.domElement);
 
+    this.communicator.send();
+
     //listeners
     this.renderer.domElement.addEventListener("mousedown", e => {
       //this.onMouseDown(e.clientX, e.clientY, this.scene);
@@ -108,6 +110,7 @@ class MainSeq {
   }
 
   updateEverything(){
+    //this.communicator.send();
     this.controls.update();
 		this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
     this.rotateAll();
@@ -160,6 +163,7 @@ class MainSeq {
     menu.add(menuOptions, "message");
   }
 
+  //had to be moved to svelte file due to some event listeners not working
   // animate() {
   //   requestAnimationFrame ( this.animate );
 	// 	this.controls.update();

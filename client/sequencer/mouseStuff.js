@@ -61,7 +61,6 @@ export class PickHelper {
   //placing cylinders
   place(normalisedPosition, scene, camera){
     //getCanvasRelativePosition(canvas);
-    console.log("bumba");
     this.raycaster.setFromCamera(normalisedPosition, camera)
 		// get the list of objects the ray intersected
     const intersectedObjects = this.raycaster.intersectObjects(scene.children);
@@ -79,22 +78,17 @@ export class PickHelper {
         //actual face object
         let face1 = this.pickedObject.geometry.faces[this.faceIdx1];
         let face2 = this.pickedObject.geometry.faces[this.faceIdx2];
-				console.log("face normal", face1.normal);
+				//console.log("face normal", face1.normal);
 
 				//index for vertices of each face object
         let vertIndxFace1 = [face1.a, face1.b, face1.c];
         let vertIndxFace2 = [face2.a, face2.b, face2.c];
 
 				let faceNormal = this.calcFaceNormal(face1);
-				console.log("FACENORMAL", faceNormal);
+				//console.log("FACENORMAL", faceNormal);
         let middleOfFace = this.calcFaceVertices(this.pickedObject, vertIndxFace1.concat(vertIndxFace2));
         middleOfFace = this.applyMatrixTransform(this.pickedObject, middleOfFace);
 
-				let returnMe = [null, null, null];
-				returnMe[0] = this.pickedObject.geometry.uuid;
-				returnMe[1] = middleOfFace;
-				returnMe[2] = faceNormal;
-				return returnMe;
         return [this.pickedObject.geometry.uuid, middleOfFace, faceNormal];
         //return {uuid:this.pickedObject.geometry.uuid, v1:vertIndxFace1, v2:vertIndxFace2};
 			}

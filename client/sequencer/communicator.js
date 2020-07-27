@@ -2,7 +2,7 @@
 //and the audio engine
 import {RingBuffer} from "../utils/ringbuf-alt.js";
 import { PubSub } from '../messaging/pubSub.js';
-let messaging = new PubSub();
+
 
 
 class Communicator {
@@ -11,12 +11,9 @@ class Communicator {
 			return Communicator.instance; // Singleton pattern
 	}
 		Communicator.instance = this;
-
-
-    this.sabs = [];
+		this.messaging = new PubSub();
+    this.sabs = {};
 	}
-
-
 
 	createSAB(chID, ttype, blocksize, port) {
 	  let sab = RingBuffer.getStorageForCapacity(32 * blocksize, Float64Array);
@@ -33,7 +30,9 @@ class Communicator {
 	  console.log(this.sabs);
 	}
 
-
+	send(){
+		this.messaging.publish("sequencerTrigger", 1);
+	}
 
 }
 

@@ -98,6 +98,11 @@ class AudioEngine {
         this.sabs.mxy.rb.push(e);
       }
     });
+    this.messaging.subscribe("sequencerTrigger", e => {
+      if (this.sabs.seq) {
+        this.sabs.seq.rb.push(e);
+      }
+    });
 		// this.messaging.subscribe("osc", e => console.log(`DEBUG:AudioEngine:OSC: ${e}`));
 
 		this.kuraClock = new kuramotoNetClock();
@@ -346,7 +351,7 @@ class AudioEngine {
 			// }
 
       this.createSAB("mxy", "mouseXY", 2, this.audioWorkletNode.port);
-
+      this.createSAB("seq", "sequencerTrigger", 1, this.audioWorkletNode.port);
 
 		}
 	}

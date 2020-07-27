@@ -87,8 +87,6 @@ mainSeq<script>
 	window.addEventListener('mouseout', clearPickPosition);
 	window.addEventListener('mouseleave', clearPickPosition);
 	window.addEventListener('keydown', e => {
-		console.log(e.keyCode);
-		console.log("KEYPRESSED");
 		if (e.keyCode == 32){
 			mainSeq.playPause();
 		}
