@@ -12,7 +12,7 @@ export class PickHelper {
 		this.faceIdx1 = -1, this.faceIdx2 = -1; //selected face ids
 		this.pickedFace = null;
 		this.pickedFaceSavedColor = 0;
-    this.selectionColor = new THREE.Color( 0xff0000 );
+    this.selectionColor = new THREE.Color( 0x2aa198 );
 	}
 
   //for changing the colour of the cylinder faces upon the mouse hovering
@@ -53,7 +53,7 @@ export class PickHelper {
 	      // save its color
 	      this.pickedObjectSavedColor = this.pickedObject.material.color.getHex();
 	      // set its emissive color to yellow
-				this.pickedObject.material.color.setHex(0xFFFF00);
+				this.pickedObject.material.color.setHex(0x97abcc);
 			}
     }
 	}
@@ -68,6 +68,7 @@ export class PickHelper {
     if (intersectedObjects.length > 0) {
 			// pick the first object. It's the closest one
       this.pickedObject = intersectedObjects[0].object;
+			//console.log("click!", intersectedObjects[0].object);
 			//if its a cylinder
 			if (this.pickedObject.geometry.type === 'CylinderGeometry'){
 				//get and store the face indexes
@@ -78,38 +79,52 @@ export class PickHelper {
         //actual face object
         let face1 = this.pickedObject.geometry.faces[this.faceIdx1];
         let face2 = this.pickedObject.geometry.faces[this.faceIdx2];
+				console.log("face normal", face1.normal);
 
-        //return the picked object
-        // let vertIndxFace1 = {verta: face1.a, vertb: face1.b, vertc: face1.c};
-        // let vertIndxFace2 = {verta: face2.a, vertb: face2.b, vertc: face2.c};
+				//index for vertices of each face object
         let vertIndxFace1 = [face1.a, face1.b, face1.c];
         let vertIndxFace2 = [face2.a, face2.b, face2.c];
 
+				let faceNormal = this.calcFaceNormal(face1);
+				console.log("FACENORMAL", faceNormal);
         let middleOfFace = this.calcFaceVertices(this.pickedObject, vertIndxFace1.concat(vertIndxFace2));
         middleOfFace = this.applyMatrixTransform(this.pickedObject, middleOfFace);
-        return [this.pickedObject.geometry.uuid, middleOfFace];
+
+				let returnMe = [null, null, null];
+				returnMe[0] = this.pickedObject.geometry.uuid;
+				returnMe[1] = middleOfFace;
+				returnMe[2] = faceNormal;
+				return returnMe;
+        return [this.pickedObject.geometry.uuid, middleOfFace, faceNormal];
         //return {uuid:this.pickedObject.geometry.uuid, v1:vertIndxFace1, v2:vertIndxFace2};
 			}
     }
   }
 
+	//calculates the center of the selected face (faces as there are two triangles)
+	//vertices are stored in the object
+	//arr contains index of face vertex locations in obj.geometry.vertices
   calcFaceVertices(obj, arr){
     let sum = new THREE.Vector3(0,0,0);
     let divider = new THREE.Vector3(arr.length,arr.length,arr.length);
-    //return obj.geometry.vertices[arr[1]];
-
-    console.log("obj", obj.matrix);
     arr.forEach(function (item, index){
       let each = obj.geometry.vertices[item];
-      //console.log("asd", obj.geometry.vertices[item]);
       sum.add(each);
     });
     return sum.divide(divider);
-
   }
 
+	//apply matrix transform so that the coords are relative to the world
+	//position of the faces
   applyMatrixTransform(obj, vector){
     return vector.applyMatrix4(obj.matrix);
   }
+
+	//calculate how much peg should be rotated. so that it is inline with the
+	//clicked face
+	//just need to pass in one face as they have the same normal
+	calcFaceNormal(face){
+		return face.normal;
+	}
 
 }

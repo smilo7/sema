@@ -1,8 +1,7 @@
-var THREE = require('three')
-var OrbitControls = require('three-orbit-controls')(THREE)
-//import {ReturnCanvas} as canvasB from '../components/widgets/Sequencer.svelte';
+var THREE = require('three');
+var OrbitControls = require('three-orbit-controls')(THREE);
+var dat = require('dat.gui');
 import {PickHelper} from '../sequencer/mouseStuff.js';
-//import * as utils from '../sequencer/utils.js';
 import {Cylinder} from '../sequencer/cylinder.js';
 import {Communicator} from '../sequencer/communicator.js';
 import {getCanvasRelativePosition, setPickPosition} from '../sequencer/utils.js';
@@ -12,6 +11,7 @@ class MainSeq {
   constructor(){
     //if (MainSeq.instance) return MainSeq.instance; // Singleton pattern
 		//MainSeq.instance = this;
+    this.playing = false;
     this.canvas;
     this.scene, this.renderer, this.camera;
     this.controls;
@@ -20,7 +20,7 @@ class MainSeq {
     this.pickHelper = new PickHelper();
     //this.clearPickPosition();
 
-    //musical objects
+    //musical cylinder objects
     this.cylinders = [];
 
     //Communicator
@@ -36,7 +36,6 @@ class MainSeq {
     this.canvas = canvas;
   }
 
-
   //give the sequencer a canvas to draw to
   setCanvas(canvas){
     this.canvas = canvas;
@@ -51,84 +50,116 @@ class MainSeq {
   }
 
   init() {
-		//let drawContext = canvas.getContext('webgl');
-		//let drawContext = document.querySelector("#glCanvas");
 		this.renderer = new THREE.WebGLRenderer( { canvas: this.canvas, antialias: true} );
-    //var width = window.innerWidth;
-    //var height = window.innerHeight;
-		var width = this.canvas.offsetWidth;
+    var width = this.canvas.offsetWidth;
 		var height = this.canvas.offsetHeight;
     this.renderer.setSize (width, height);
-    //document.body.appendChild (renderer.domElement);
     this.scene = new THREE.Scene();
-		var cylinder = new Cylinder(this.scene, 0,10,0,false);
-		var cylinder2 = new Cylinder(this.scene, 20,10,0,false);
-		var cylinder3 = new Cylinder(this.scene, -30,10,-20,true);
 
-    this.cylinders.push(cylinder, cylinder2, cylinder3); //add to store
+		this.testCylinders();
 
     this.setCamera(width, height);
+    this.lights();
     makeGrid(this.scene);
-    //controls = new THREE.OrbitControls (camera, renderer.domElement);
 		this.controls = new OrbitControls (this.camera, this.renderer.domElement);
-    this.keyboardControls = new KeyboardControls(this.renderer.domElement);
+
     //listeners
-    //this.renderer.domElement.addEventListener("mouseup", this.onMouseUp(this.canvas), false);
     this.renderer.domElement.addEventListener("mousedown", e => {
       //this.onMouseDown(e.clientX, e.clientY, this.scene);
+      //this.playPause();
       this.onMouseDown();
     });
 
     console.log(this.canvas);
   }
 
+  testCylinders(){
+    var cylinder = new Cylinder(this.scene, 0,10,0,false);
+		var cylinder2 = new Cylinder(this.scene, 20,10,0,false);
+		var cylinder3 = new Cylinder(this.scene, -30,10,-20,false);
+    this.cylinders.push(cylinder, cylinder2, cylinder3); //add to store
+  }
+
+  playPause(){
+    if (this.playing){
+      this.playing = false
+      console.log("sequencer is now paused");
+    } else {
+      this.playing = true;
+      console.log("sequencer is now playing");
+    }
+  }
+
   onMouseDown(){
-    // console.log("here we go", x, y);
-    // console.log("blah", this.pickPosition);
-    // console.log(this.scene, scene);
     let raycastReturn = this.pickHelper.place(this.pickPosition, this.scene, this.camera);
     let selectedUUID = raycastReturn[0];
-    let middleOfSelectedFace = raycastReturn[1];
+    let middleOfSelectedFace = raycastReturn[1]; //coords to spawn the peg at
+    let rotateToFace = raycastReturn[2];
     //loop through list of cylinders
     //TODO replace this with a dict so its faster
     for (let i=0;i<this.cylinders.length;i++){
-      //console.log("selected",selectedUUID);
-      //console.log("all",this.cylinders[i].uuid);
       if (selectedUUID === this.cylinders[i].uuid){
         let selectedCylinder = this.cylinders[i];
         console.log("clicked", this.cylinders[i].uuid);
-
         console.log(middleOfSelectedFace);
-
-        //selectedCylinder.geometry.vertices[raycastReturn[1]]
-
-        selectedCylinder.addPeg(middleOfSelectedFace.x, middleOfSelectedFace.y, middleOfSelectedFace.z);
+        selectedCylinder.addPeg(middleOfSelectedFace.x, middleOfSelectedFace.y, middleOfSelectedFace.z, rotateToFace);
       }
     }
-    //var asdasd = new Cylinder(scene, 10,10,20,false);
   }
-
-
-  onMouseUp(canvas){
-    console.log(this.canvas);
-    //var self = this;
-    console.log(canvas);
-    console.log("mouseup");
-    //console.log(this.getCanvas());
-
-    //console.log(temp);
-    let pos = setPickPosition(this.canvas, this.pickPosition);
-    this.pickHelper.place(pos, this.scene, this.camera);
-  }
-
-
 
   updateEverything(){
     this.controls.update();
 		this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
-    //this.pickHelper.place(this.pickPosition, this.scene, this.camera);
+    this.rotateAll();
     this.renderer.render(this.scene, this.camera);
   }
+
+  rotateAll(){
+    if (this.playing){
+      this.cylinders.forEach(function(each,i){
+        each.rotate(0.01);
+      });
+    }
+  }
+
+  lights(){
+    //lighthing
+    var ambientLight = new THREE.AmbientLight( 0x404040 );
+    this.scene.add(ambientLight);
+    this.scene.background = new THREE.Color( 0xeee8d5 );
+    var spotLight = new THREE.PointLight(0xffffff, 1, 1000);
+    spotLight.position.set(0, 50, 100);
+    var otherSide = new THREE.PointLight(0xffffff, 1, 1000);
+    otherSide.position.set(0, 50, -100);
+    this.scene.add(otherSide);
+    // lights
+		this.scene.add( new THREE.AmbientLight( 0x666666 ) );
+		var light = new THREE.DirectionalLight( 0xdfebff, 1 );
+		light.position.set( 50, 200, 100 );
+		light.position.multiplyScalar( 1.3 );
+		light.castShadow = true;
+		light.shadow.mapSize.width = 1024;
+		light.shadow.mapSize.height = 1024;
+		var d = 300;
+		light.shadow.camera.left = - d;
+		light.shadow.camera.right = d;
+		light.shadow.camera.top = d;
+		light.shadow.camera.bottom = - d;
+		light.shadow.camera.far = 1000;
+		this.scene.add( light );
+  }
+
+  menus(){
+    let menuOptions = {
+      message: ''
+    }
+    //let gui = new dat.GUI({autoplace: false});
+    let gui = new dat.GUI();
+    this.canvas.appendChild(gui.domElement);
+    let menu = gui.addFolder('Peg');
+    menu.add(menuOptions, "message");
+  }
+
   // animate() {
   //   requestAnimationFrame ( this.animate );
 	// 	this.controls.update();
@@ -166,18 +197,13 @@ class MainSeq {
   //   this.pickPosition.x = -100000;
   //   this.pickPosition.y = -100000;
   // }
-
-
-
-
-
 }
 
 //colors
 var selectionColor = new THREE.Color( 0xff0000 );
 
 function makeGrid(scene){
-	let gridXZ = new THREE.GridHelper(100, 10, new THREE.Color(0xff0000), new THREE.Color(0xffffff));
+	let gridXZ = new THREE.GridHelper(100, 10, new THREE.Color(0x586e75), new THREE.Color(0x073642));
 	//gridXZ.setColors( new THREE.Color(0xff0000), new THREE.Color(0xffffff) );
 	scene.add(gridXZ);
 }

@@ -86,6 +86,13 @@ mainSeq<script>
 	window.addEventListener('mousemove', setPickPosition);
 	window.addEventListener('mouseout', clearPickPosition);
 	window.addEventListener('mouseleave', clearPickPosition);
+	window.addEventListener('keydown', e => {
+		console.log(e.keyCode);
+		console.log("KEYPRESSED");
+		if (e.keyCode == 32){
+			mainSeq.playPause();
+		}
+	});
 	//window.addEventListener('mousedown', setPickPosition);
 
   onMount(async () => {
