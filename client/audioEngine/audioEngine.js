@@ -99,10 +99,10 @@ class AudioEngine {
       }
     });
     this.messaging.subscribe("sequencerTrigger", e => {
-      console.log("HEREEEE MANNN");
+      //console.log("Recieved in audio engine", e);
       if (this.sabs.seq) {
-        console.log("yo");
-        this.sabs.seq.rb.push(e);
+        console.log("sending", e);
+        this.sabs.seq.rb.push(new Float32Array([e]));
       }
     });
 		// this.messaging.subscribe("osc", e => console.log(`DEBUG:AudioEngine:OSC: ${e}`));

@@ -32,6 +32,17 @@
 	}
 	document.addEventListener('mousemove', onMouseMove);
 
+	// function onMouseDownHere(e){
+	// 	console.log("listener in the window");
+	// 	//messaging.publish("sequencerTrigger", -1)
+	// 	//0 sent first
+	// 	messaging.publish("sequencerTrigger", 0);
+	// 	messaging.publish("sequencerTrigger", 2);
+	//
+	// 	//messaging.publish("sequencerTrigger", 0);
+	// }
+	// document.addEventListener('mousedown', onMouseDownHere);
+
 
 
 </script>

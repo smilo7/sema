@@ -63,7 +63,7 @@ class MainSeq {
     makeGrid(this.scene);
 		this.controls = new OrbitControls (this.camera, this.renderer.domElement);
 
-    this.communicator.send();
+    //this.communicator.send();
 
     //listeners
     this.renderer.domElement.addEventListener("mousedown", e => {

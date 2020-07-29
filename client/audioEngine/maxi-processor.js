@@ -554,6 +554,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
         let avail = inputSABs[v].rb.available_read();
         // console.log(avail, SABs[v].rb.capacity);
         if (avail != inputSABs[v].rb.capacity && avail > 0) {
+            //console.log("maxi",v); //here SAB is recieved
             for (let i=0; i < avail; i+=inputSABs[v].blocksize) {
               let val = new Float64Array(inputSABs[v].blocksize);
               inputSABs[v].rb.pop(val);
@@ -566,6 +567,7 @@ class MaxiProcessor extends AudioWorkletProcessor {
     this.getSABValue = (id) => {
       let res=0;
       let sab= inputSABs[id];
+      //console.log("ID", id);
       // if (id === 'seq'){
       //   console.log("in maximillian this.getSABValue", sab.value);
       // }
