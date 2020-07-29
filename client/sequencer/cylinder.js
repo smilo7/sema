@@ -46,7 +46,7 @@ class Cylinder {
     this.scene.add(this.group);
     console.log(this.group);
   }
-
+  
   rotate(rad){
     this.mesh.rotation.y += rad;
     this.group.rotation.y += rad;

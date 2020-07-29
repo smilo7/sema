@@ -566,6 +566,9 @@ class MaxiProcessor extends AudioWorkletProcessor {
     this.getSABValue = (id) => {
       let res=0;
       let sab= inputSABs[id];
+      // if (id === 'seq'){
+      //   console.log("in maximillian this.getSABValue", sab.value);
+      // }
       if (sab) {
         res = sab.value;
       }

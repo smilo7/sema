@@ -99,7 +99,9 @@ class AudioEngine {
       }
     });
     this.messaging.subscribe("sequencerTrigger", e => {
+      console.log("HEREEEE MANNN");
       if (this.sabs.seq) {
+        console.log("yo");
         this.sabs.seq.rb.push(e);
       }
     });
@@ -351,6 +353,7 @@ class AudioEngine {
 			// }
 
       this.createSAB("mxy", "mouseXY", 2, this.audioWorkletNode.port);
+      //            chID, ttype, blocksize, port
       this.createSAB("seq", "sequencerTrigger", 1, this.audioWorkletNode.port);
 
 		}

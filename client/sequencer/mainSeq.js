@@ -93,6 +93,7 @@ class MainSeq {
   }
 
   onMouseDown(){
+    this.communicator.send();
     let raycastReturn = this.pickHelper.place(this.pickPosition, this.scene, this.camera);
     let selectedUUID = raycastReturn[0];
     let middleOfSelectedFace = raycastReturn[1]; //coords to spawn the peg at
