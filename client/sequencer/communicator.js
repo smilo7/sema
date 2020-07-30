@@ -14,9 +14,14 @@ class Communicator {
 
 	send(){
 		console.log("SENDING SIGNAL");
-		this.messaging.publish("sequencerTrigger", 0); //0 sent first
+		//this.messaging.publish("sequencerTrigger", 0); //0 sent first
 		this.messaging.publish("sequencerTrigger", 1);
+
 		//this.messaging.publish("sequencerTrigger", 0);
+	}
+
+	reset(){
+		this.messaging.publish("sequencerTrigger", 0);
 	}
 
 }

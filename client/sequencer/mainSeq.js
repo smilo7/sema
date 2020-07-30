@@ -69,8 +69,14 @@ class MainSeq {
     this.renderer.domElement.addEventListener("mousedown", e => {
       //this.onMouseDown(e.clientX, e.clientY, this.scene);
       //this.playPause();
+      this.communicator.reset();
       this.onMouseDown();
     });
+
+    this.renderer.domElement.addEventListener("mouseup", e => {
+      this.communicator.send();
+    });
+
 
     console.log(this.canvas);
   }
@@ -93,7 +99,6 @@ class MainSeq {
   }
 
   onMouseDown(){
-    this.communicator.send();
     let raycastReturn = this.pickHelper.place(this.pickPosition, this.scene, this.camera);
     let selectedUUID = raycastReturn[0];
     let middleOfSelectedFace = raycastReturn[1]; //coords to spawn the peg at
@@ -111,7 +116,7 @@ class MainSeq {
   }
 
   updateEverything(){
-    //this.communicator.send();
+    //this.communicator.reset();
     this.controls.update();
 		this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
     this.rotateAll();
