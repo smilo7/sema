@@ -83,7 +83,7 @@ class MainSeq {
 
   testCylinders(){
     var cylinder = new Cylinder(this.scene, 0,10,0,false);
-		var cylinder2 = new Cylinder(this.scene, 20,10,0,false);
+		var cylinder2 = new Cylinder(this.scene, 18,10,0,false);
 		var cylinder3 = new Cylinder(this.scene, -30,10,-20,false);
     this.cylinders.push(cylinder, cylinder2, cylinder3); //add to store
   }
@@ -126,7 +126,7 @@ class MainSeq {
   rotateAll(){
     if (this.playing){
       this.cylinders.forEach(function(each,i){
-        each.rotate(0.01);
+        each.rotate();
       });
     }
   }

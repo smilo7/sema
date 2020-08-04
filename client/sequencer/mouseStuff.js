@@ -73,23 +73,24 @@ export class PickHelper {
 				//get and store the face indexes
 				this.faceIdx1 = intersectedObjects[0].faceIndex;
 				this.faceIdx2 = this.faceIdx1 % 2 === 0 ? this.faceIdx1 + 1: this.faceIdx1 - 1;
-        console.log(this.pickedObject.geometry.faces[this.faceIdx1]);
-
+        console.log("picked face", this.pickedObject.geometry.faces[this.faceIdx1]);
         //actual face object
         let face1 = this.pickedObject.geometry.faces[this.faceIdx1];
         let face2 = this.pickedObject.geometry.faces[this.faceIdx2];
 				//console.log("face normal", face1.normal);
+				console.log("face normals", face1.normal);
+				console.log("face normals", face2.normal);
 
 				//index for vertices of each face object
         let vertIndxFace1 = [face1.a, face1.b, face1.c];
         let vertIndxFace2 = [face2.a, face2.b, face2.c];
 
-				let faceNormal = this.calcFaceNormal(face1);
-				//console.log("FACENORMAL", faceNormal);
-        let middleOfFace = this.calcFaceVertices(this.pickedObject, vertIndxFace1.concat(vertIndxFace2));
-        middleOfFace = this.applyMatrixTransform(this.pickedObject, middleOfFace);
 
-        return [this.pickedObject.geometry.uuid, middleOfFace, faceNormal];
+        let middleOfFace = this.calcFaceVertices(this.pickedObject, vertIndxFace1.concat(vertIndxFace2));
+        //middleOfFace = this.applyMatrixTransform(this.pickedObject, middleOfFace);
+				let faceNormal = this.calcFaceNormal(face1, this.pickedObject, middleOfFace);
+				//let faceNormal = this.rotateToFace(this.pickedObject, face1.normal);
+        return [this.pickedObject.geometry.uuid, middleOfFace, face1];
         //return {uuid:this.pickedObject.geometry.uuid, v1:vertIndxFace1, v2:vertIndxFace2};
 			}
     }
@@ -100,12 +101,13 @@ export class PickHelper {
 	//arr contains index of face vertex locations in obj.geometry.vertices
   calcFaceVertices(obj, arr){
     let sum = new THREE.Vector3(0,0,0);
-    let divider = new THREE.Vector3(arr.length,arr.length,arr.length);
+    //let divider = new THREE.Vector3(arr.length,arr.length,arr.length);
     arr.forEach(function (item, index){
       let each = obj.geometry.vertices[item];
       sum.add(each);
     });
-    return sum.divide(divider);
+		return sum.divideScalar(arr.length);
+    //return sum.divide(divider);
   }
 
 	//apply matrix transform so that the coords are relative to the world
@@ -114,11 +116,29 @@ export class PickHelper {
     return vector.applyMatrix4(obj.matrix);
   }
 
+	rotateToFace(obj, normal){
+		return normal.applyMatrix4(obj.matrix)
+	}
+
 	//calculate how much peg should be rotated. so that it is inline with the
 	//clicked face
 	//just need to pass in one face as they have the same normal
-	calcFaceNormal(face){
-		return face.normal;
+	calcFaceNormal(face, obj, _v1){
+		let vToLookAt; //vector for peg to lookAt
+		let _normalMatrix = new THREE.Matrix3();
+		let _v2 = new THREE.Vector3();
+		let normal = face.normal.clone();
+
+		_normalMatrix.getNormalMatrix( obj.matrixWorld );
+
+		console.log(_normalMatrix);
+		_v2.copy(normal).applyMatrix3( _normalMatrix ).normalize() //.multiplyScalar(10).add( _v1 );
+		console.log("v2", _v2);
+
+		vToLookAt = _v2;
+		return vToLookAt;
 	}
+
+
 
 }
