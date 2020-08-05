@@ -6,7 +6,7 @@ class Cylinder {
   constructor (scene, x, y, z, edges=true){
     //spawn location of cylinder
     this.scene = scene;
-    this.rotationSpeed = 0.01;
+    this.rotationSpeed = 1;
     this.x = x;
     this.y = y;
     this.geometry = new THREE.CylinderGeometry( 5, 5, 20, 8, 6 );
@@ -44,7 +44,7 @@ class Cylinder {
     this.pegs.push(new Peg(3,3,10, x, y, z, face));
     //add peg as child of cylinder mesh
     let newPeg = this.pegs[this.pegs.length-1]
-    newPeg.mesh.lookAt(face.normal);
+    //newPeg.mesh.lookAt(face.normal);
     this.mesh.attach(newPeg.getMesh());
     this.mesh.children[this.pegs.length-1].lookAt(face.normal);
     //newPeg.rotateToFace2();
@@ -60,11 +60,31 @@ class Cylinder {
     //this.pegGroup.add(this.pegs[this.pegs.length-1].getMesh());
   }
 
-  rotate(){
-    this.mesh.rotation.y += this.rotationSpeed;
+  rotate(delta){
+    this.mesh.rotation.y += delta * 45000 * Math.PI / 180; //this.rotationSpeed;
     //console.log(this.group.rotation);
     //this.group.rotation.y += this.rotationSpeed;
     //this.mesh.rotateY(rad);
+  }
+
+  checkForCollisions(){
+    let collision = false;
+
+  	var originPoint = this.mesh.position.clone();
+
+  	for (var vertexIndex = 0; vertexIndex < this.mesh.geometry.vertices.length; vertexIndex++)
+  	{
+  		var localVertex = this.mesh.geometry.vertices[vertexIndex].clone();
+  		var globalVertex = localVertex.applyMatrix4( this.mesh.matrix );
+  		var directionVector = globalVertex.sub( this.mesh.position );
+
+  		var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+  		var collisionResults = ray.intersectObjects( collidableMeshList );
+  		if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() )
+  			collision = true
+  	}
+    console.log("collision occured")
+    return collision;
   }
 
 }

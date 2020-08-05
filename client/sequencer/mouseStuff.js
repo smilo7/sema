@@ -88,7 +88,7 @@ export class PickHelper {
 
         let middleOfFace = this.calcFaceVertices(this.pickedObject, vertIndxFace1.concat(vertIndxFace2));
         //middleOfFace = this.applyMatrixTransform(this.pickedObject, middleOfFace);
-				let faceNormal = this.calcFaceNormal(face1, this.pickedObject, middleOfFace);
+				//let faceNormal = this.calcFaceNormal(face1, this.pickedObject, middleOfFace);
 				//let faceNormal = this.rotateToFace(this.pickedObject, face1.normal);
         return [this.pickedObject.geometry.uuid, middleOfFace, face1];
         //return {uuid:this.pickedObject.geometry.uuid, v1:vertIndxFace1, v2:vertIndxFace2};

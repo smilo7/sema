@@ -25,6 +25,11 @@ class MainSeq {
 
     //Communicator
     this.communicator =  new Communicator();
+
+    //clock
+    this.clock = new THREE.Clock();
+    this.time;
+    this.delta;
     //this.communicator.createSAB("collision", "collisionTrigger", 1, this.audioWorkletNode.port)
   }
 
@@ -116,17 +121,25 @@ class MainSeq {
   }
 
   updateEverything(){
+    //update clock stuff
+    this.time = this.clock.getElapsedTime();
+    this.delta = this.clock.getDelta();
+
     //this.communicator.reset();
     this.controls.update();
 		this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
-    this.rotateAll();
+    this.rotateAll(this.delta);
     this.renderer.render(this.scene, this.camera);
+
+
+    //console.log(this.delta);
   }
 
-  rotateAll(){
+  rotateAll(delta){
+    //console.log(this.delta);
     if (this.playing){
       this.cylinders.forEach(function(each,i){
-        each.rotate();
+        each.rotate(delta);
       });
     }
   }
