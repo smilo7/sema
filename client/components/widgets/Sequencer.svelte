@@ -5,7 +5,7 @@
   import { PubSub } from '../../messaging/pubSub.js';
 
   let messaging = new PubSub();
-	let stats = require('stats.js');
+	//let stats = require('stats.js');
 	//import {init, animate} from '../../sequencer/mainSeq.js';
 	import { MainSeq } from '../../sequencer/mainSeq.js';
 
@@ -133,16 +133,16 @@
     mainSeq.pickPosition.y = -100000;
   }
 
-	var stats = new Stats();
-	stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-	document.body.appendChild( stats.dom );
+	// stats = new Stats();
+	// stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+	// document.body.appendChild( stats.dom );
 
 	function animate() {
 
     requestAnimationFrame ( animate );
-		stats.begin();
+		//stats.begin();
 		mainSeq.updateEverything();
-		stats.end();
+		//stats.end();
 		// mainSeq.controls.update();
 		// mainSeq.pickHelper.pick(mainSeq.pickPosition, mainSeq.scene, mainSeq.camera);
     // mainSeq.renderer.render(mainSeq.scene, mainSeq.camera);

@@ -30,6 +30,8 @@ class MainSeq {
     this.clock = new THREE.Clock();
     this.time;
     this.delta;
+    this.frames = 0;
+    this.dcount = 0;
     //this.communicator.createSAB("collision", "collisionTrigger", 1, this.audioWorkletNode.port)
   }
 
@@ -123,8 +125,9 @@ class MainSeq {
   updateEverything(){
     //update clock stuff
     this.time = this.clock.getElapsedTime();
+    console.log(this.time)
     this.delta = this.clock.getDelta();
-
+    //this.calcFPS(this.delta);
     //this.communicator.reset();
     this.controls.update();
 		this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
@@ -133,6 +136,17 @@ class MainSeq {
 
 
     //console.log(this.delta);
+  }
+
+  calcFPS(delta){
+    this.frames += 1;
+    this.dcount += delta;
+    console.log(this.frames, this.dcount);
+    if (this.dcount >= 1){
+      console.log(this.frames);
+      this.frames = 0;
+      this.dcount = 0;
+    }
   }
 
   rotateAll(delta){

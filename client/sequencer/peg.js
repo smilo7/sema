@@ -39,7 +39,7 @@ class Peg {
   }
 
 
-  collision(){
+  collision(nonCollidables){
       // collision detection:
   	//   determines if any of the rays from the cube's origin to each vertex
   	//		intersects any face of a mesh in the array of target meshes

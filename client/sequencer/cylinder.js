@@ -68,6 +68,10 @@ class Cylinder {
   }
 
   checkForCollisions(){
+    this.pegs.forEach(function(each,i){
+      each.collision(this.mesh.children); //pass through meshlist of children (pegs)
+    });
+
     let collision = false;
 
   	var originPoint = this.mesh.position.clone();
