@@ -1,5 +1,5 @@
-var THREE = require('three')
-var OrbitControls = require('three-orbit-controls')(THREE)
+var THREE = require('three');
+var OrbitControls = require('three-orbit-controls')(THREE);
 //import * as utils from '../sequencer/utils.js';
 import {setFaceColor, getCanvasRelativePosition, setPickPosition} from '../sequencer/utils.js';
 

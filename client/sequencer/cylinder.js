@@ -41,17 +41,20 @@ class Cylinder {
   }
 
   addPeg(x, y, z, face){
-    this.pegs.push(new Peg(3,3,10, x, y, z, face));
+
+    this.pegs.push(new Peg(3,3,10, x*2, y, z*2, face, this.scene));
     //add peg as child of cylinder mesh
     let newPeg = this.pegs[this.pegs.length-1]
-    //newPeg.mesh.lookAt(face.normal);
-    this.mesh.attach(newPeg.getMesh());
-    this.mesh.children[this.pegs.length-1].lookAt(face.normal);
-    //newPeg.rotateToFace2();
-    //newPeg.orientAlongNormal();
+    newPeg.mesh.lookAt(face.normal);
+    this.mesh.add(newPeg.getMesh());
+
+    //this.mesh.children[this.pegs.length-1].lookAt(face.normal);
+    //newPeg.mesh.updateMatrixWorld(true);
     newPeg.setPos();
-    //newPeg.rotateToFace();
-    //add arrow helper for debugging
+    //newPeg.updateMatrix();
+    //this.mesh.updateMatrix();
+
+    //newPeg.boundingBox();
 
     //this.mesh.attach(this.pegs[this.pegs.length-1]);
     //console.log("pegMesh", this.pegs[this.pegs.length-1].getMesh());
@@ -61,34 +64,22 @@ class Cylinder {
   }
 
   rotate(delta){
-    this.mesh.rotation.y += delta * 45000 * Math.PI / 180; //this.rotationSpeed;
+
+    this.mesh.rotation.y += 0.01 //delta * 45000 * Math.PI / 180; //this.rotationSpeed;
     //console.log(this.group.rotation);
     //this.group.rotation.y += this.rotationSpeed;
     //this.mesh.rotateY(rad);
   }
 
-  checkForCollisions(){
-    this.pegs.forEach(function(each,i){
-      each.collision(this.mesh.children); //pass through meshlist of children (pegs)
+
+
+  checkForCollisions(collidables){
+    //collidables is list of pegs that is attached to cylinder
+    //loop through all pegs attached to cylinder
+    this.pegs.forEach(function(each){
+      //each.boundingBox();
+      each.collision(collidables); //pass through collidables which is all the pegs.
     });
-
-    let collision = false;
-
-  	var originPoint = this.mesh.position.clone();
-
-  	for (var vertexIndex = 0; vertexIndex < this.mesh.geometry.vertices.length; vertexIndex++)
-  	{
-  		var localVertex = this.mesh.geometry.vertices[vertexIndex].clone();
-  		var globalVertex = localVertex.applyMatrix4( this.mesh.matrix );
-  		var directionVector = globalVertex.sub( this.mesh.position );
-
-  		var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-  		var collisionResults = ray.intersectObjects( collidableMeshList );
-  		if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() )
-  			collision = true
-  	}
-    console.log("collision occured")
-    return collision;
   }
 
 }

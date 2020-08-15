@@ -22,6 +22,7 @@ class MainSeq {
 
     //musical cylinder objects
     this.cylinders = [];
+    this.collidables = this.getCollidables();
 
     //Communicator
     this.communicator =  new Communicator();
@@ -90,7 +91,7 @@ class MainSeq {
 
   testCylinders(){
     var cylinder = new Cylinder(this.scene, 0,10,0,false);
-		var cylinder2 = new Cylinder(this.scene, 18,10,0,false);
+		var cylinder2 = new Cylinder(this.scene, 20,10,0,false);
 		var cylinder3 = new Cylinder(this.scene, -30,10,-20,false);
     this.cylinders.push(cylinder, cylinder2, cylinder3); //add to store
   }
@@ -118,16 +119,21 @@ class MainSeq {
         console.log("clicked", this.cylinders[i].uuid);
         console.log(middleOfSelectedFace);
         selectedCylinder.addPeg(middleOfSelectedFace.x, middleOfSelectedFace.y, middleOfSelectedFace.z, rotateToFace);
+        //update list of getCollidables
+        this.collidables = this.getCollidables();
+        console.log(this.collidables);
       }
     }
   }
 
+
   updateEverything(){
     //update clock stuff
     this.time = this.clock.getElapsedTime();
-    console.log(this.time)
     this.delta = this.clock.getDelta();
-    //this.calcFPS(this.delta);
+
+    this.collisionCheck(); //check for peg collisions
+
     //this.communicator.reset();
     this.controls.update();
 		this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
@@ -136,6 +142,31 @@ class MainSeq {
 
 
     //console.log(this.delta);
+  }
+
+  //for each cylinders pegs,
+  getCollidables(){
+    let collidables = [];
+    this.cylinders.forEach(function(each){
+
+      if (each.mesh.children.length > 0){
+        each.mesh.children.forEach(function(peg){
+          collidables.push(peg);
+        });
+      }
+    });
+
+    return collidables
+  }
+
+  collisionCheck(){
+    let collidables = this.collidables;
+    if (this.playing){
+      this.cylinders.forEach(function(each){
+        //console.log(collidables);
+        each.checkForCollisions(collidables);
+      });
+    }
   }
 
   calcFPS(delta){
