@@ -64,11 +64,8 @@ class Cylinder {
   }
 
   rotate(delta){
-
-    this.mesh.rotation.y += 0.01 //delta * 45000 * Math.PI / 180; //this.rotationSpeed;
-    //console.log(this.group.rotation);
-    //this.group.rotation.y += this.rotationSpeed;
-    //this.mesh.rotateY(rad);
+    this.mesh.rotation.y += this.rotationSpeed * delta;
+    //this.mesh.rotation.y += 0.01 //delta * 45000 * Math.PI / 180; //this.rotationSpeed;
   }
 
 

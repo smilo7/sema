@@ -1,9 +1,11 @@
 var THREE = require('three');
+import { PubSub } from '../messaging/pubSub.js';
 
 class Peg {
   constructor(width, height, depth, x, y, z, face, scene){
     //this.scene = scene;
     this.chID;
+    this.signal = 30;
     this.width = width;
     this.height = height;
     this.depth = depth;
@@ -16,6 +18,7 @@ class Peg {
     this.face = face;
     this.code = '';
     this.scene = scene;
+    this.currentCollisionUUID = null;
 
     //add to scene
     //this.scene.add( this.mesh );
@@ -24,7 +27,11 @@ class Peg {
     //boundingBox stuff
     this.box = new THREE.Box3();
     this.mesh.geometry.computeBoundingBox();
+    this.messaging = new PubSub();
 
+
+    //objects for collision so they dont get recreated all the time
+    this.originPoint = new THREE.Vector3(0,0,0);
   }
 
   setPos(){
@@ -63,45 +70,47 @@ class Peg {
   }
 
   collision(collidables){
-      // collision detection:
-  	//   determines if any of the rays from the cube's origin to each vertex
-  	//		intersects any face of a mesh in the array of target meshes
-  	//   for increased collision accuracy, add more vertices to the cube;
-  	//		for example, new THREE.CubeGeometry( 64, 64, 64, 8, 8, 8, wireMaterial )
-  	//   HOWEVER: when the origin of the ray is within the target mesh, collisions do not occur
-    var collision = false;
 
-  	var originPoint = this.mesh.getWorldPosition().clone();
+  	this.mesh.getWorldPosition(this.originPoint).clone(); //have to get world pos for it to work properly
 
-    //make raycaster for each vertex
-    //var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-
-    //for each vertex546bn
+    //for each vertex
   	for (var vertexIndex = 0; vertexIndex < this.mesh.geometry.vertices.length; vertexIndex++)
   	{
+
   		var localVertex = this.mesh.geometry.vertices[vertexIndex].clone();
   		var globalVertex = localVertex.applyMatrix4( this.mesh.matrix );
   		var directionVector = globalVertex.sub( this.mesh.position );
+  		var ray = new THREE.Raycaster( this.originPoint, directionVector.clone().normalize(), 0, directionVector.length() );
 
-  		var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize(), 0, directionVector.length() );
-      //this.mesh.parent.add(new THREE.ArrowHelper(ray.direction, originPoint, directionVector.length()));
-      //this.mesh.parent.add(new THREE.ArrowHelper(directionVector.clone().normalize(), originPoint, 10, 0xff0000) );
-      //var ray = new THREE.Raycaster(originPoint, localVertex);
+      let collisionObj = null;
+
   		var intersectedObjects = ray.intersectObjects( collidables );
       if (intersectedObjects.length > 0){
-        console.log(intersectedObjects.length);
-        console.log(intersectedObjects[0].object.geometry.type);
-        intersectedObjects[0].object.material.color.setHex(0xFF0000);
-        //intersectedObjects[0].object.material.color.setHex(0xFF0000);
+        //check if its a new collision and not an existing one
+        if (intersectedObjects[0].object.uuid != this.currentCollisionUUID){
+          collisionObj = intersectedObjects[0].object;
+          this.sendTrigger();
+          this.changeColor(collisionObj);
+          this.currentCollisionUUID = intersectedObjects[0].object.uuid; //set current collision to new collision
+        }
+      } else if(collisionObj != null){ //set collision uuid back to normal (null)
+        this.currentCollisionUUID = null;
+        collisionObj.material.color.setHex(0x6fa1a1);
+        collision = false;
       }
-      //&& intersectedObjects[0].object.geometry.type == 'BoxGeometry'
-  		if ( intersectedObjects.length > 0 && intersectedObjects[0].distance < directionVector.length()){
-        collision = true;
-        console.log("COLLISION OCCURED", collision);
-        intersectedObjects[0].object.material.color.setHex(0x32CD32);
-      }
+
   	}
-    return collision;
+
+  }
+
+  //
+  sendTrigger(){
+    this.messaging.publish("collision", this.signal);
+  }
+
+  //deal with changing color when collided
+  changeColor(obj){
+    obj.material.color.setHex(0xFF0000);
   }
 
 

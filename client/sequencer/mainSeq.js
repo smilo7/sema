@@ -6,6 +6,9 @@ import {Cylinder} from '../sequencer/cylinder.js';
 import {Communicator} from '../sequencer/communicator.js';
 import {getCanvasRelativePosition, setPickPosition} from '../sequencer/utils.js';
 import {KeyboardControls} from '../sequencer/keyboardControls.js';
+import { PubSub } from '../messaging/pubSub.js';
+
+//var Stats = require('stats.js');
 
 class MainSeq {
   constructor(){
@@ -30,10 +33,16 @@ class MainSeq {
     //clock
     this.clock = new THREE.Clock();
     this.time;
-    this.delta;
+    this.delta = 0;
     this.frames = 0;
     this.dcount = 0;
     //this.communicator.createSAB("collision", "collisionTrigger", 1, this.audioWorkletNode.port)
+
+    this.messaging = new PubSub();
+    this.messaging.subscribe("collision", e=> {
+      this.communicator.send(1, 0);
+    });
+
   }
 
   get getCanvas(){
@@ -71,8 +80,6 @@ class MainSeq {
     makeGrid(this.scene);
 		this.controls = new OrbitControls (this.camera, this.renderer.domElement);
 
-    //this.communicator.send();
-
     //listeners
     this.renderer.domElement.addEventListener("mousedown", e => {
       //this.onMouseDown(e.clientX, e.clientY, this.scene);
@@ -81,10 +88,9 @@ class MainSeq {
       this.onMouseDown();
     });
 
-    this.renderer.domElement.addEventListener("mouseup", e => {
-      this.communicator.send();
-    });
-
+    // this.renderer.domElement.addEventListener("mouseup", e => {
+    //   this.communicator.send();
+    // });
 
     console.log(this.canvas);
   }
@@ -129,19 +135,28 @@ class MainSeq {
 
   updateEverything(){
     //update clock stuff
-    this.time = this.clock.getElapsedTime();
-    this.delta = this.clock.getDelta();
-
+    // this.time = this.clock.getElapsedTime();
+    // this.delta = this.clock.getDelta();
+    let delta = this.clock.getDelta();
+    this.audioEngineResetter(delta);
     this.collisionCheck(); //check for peg collisions
 
     //this.communicator.reset();
     this.controls.update();
 		this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
-    this.rotateAll(this.delta);
+    this.rotateAll(delta);
     this.renderer.render(this.scene, this.camera);
 
 
     //console.log(this.delta);
+  }
+
+  audioEngineResetter(delta){
+    this.dcount += delta;
+    if (this.dcount >= 0.025){
+      this.dcount = 0;
+      this.communicator.reset();
+    }
   }
 
   //for each cylinders pegs,
@@ -226,6 +241,12 @@ class MainSeq {
     let menu = gui.addFolder('Peg');
     menu.add(menuOptions, "message");
   }
+
+  // statsBox(){
+  //   let statz = new Stats.Stats();
+  // 	statz.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+  //   this.canvas.appendChild(gui.domElement);
+  // }
 
   //had to be moved to svelte file due to some event listeners not working
   // animate() {

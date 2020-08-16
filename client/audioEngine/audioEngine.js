@@ -103,7 +103,7 @@ class AudioEngine {
     this.messaging.subscribe("sequencerTrigger", e => {
       //console.log("Recieved in audio engine", e);
       if (this.sabs.seq) {
-        console.log("sending", e);
+        //console.log("sending", e);
         this.sabs.seq.rb.push(new Float32Array([e]));
       }
     });
