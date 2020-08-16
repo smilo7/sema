@@ -19,6 +19,7 @@ class Peg {
     this.code = '';
     this.scene = scene;
     this.currentCollisionUUID = null;
+    this.alreadyHitList = []; //this should get cleared every rotation
 
     //add to scene
     //this.scene.add( this.mesh );
@@ -71,36 +72,48 @@ class Peg {
 
   collision(collidables){
 
-  	this.mesh.getWorldPosition(this.originPoint).clone(); //have to get world pos for it to work properly
+    this.mesh.getWorldPosition(this.originPoint).clone(); //have to get world pos for it to work properly
 
-    //for each vertex
-  	for (var vertexIndex = 0; vertexIndex < this.mesh.geometry.vertices.length; vertexIndex++)
+    let collision = false;
+    let collisionObj = null;
+    let vertHitCount = 0; //number of vertices that are hit. has to be 2 for a trigger to be sent.
+  	for (var vIndex = 0; vIndex < this.mesh.geometry.vertices.length; vIndex++)
   	{
 
-  		var localVertex = this.mesh.geometry.vertices[vertexIndex].clone();
-  		var globalVertex = localVertex.applyMatrix4( this.mesh.matrix );
+  		var localVertex = this.mesh.geometry.vertices[vIndex].clone();
+  		var globalVertex =  localVertex.applyMatrix4( this.mesh.matrix );
   		var directionVector = globalVertex.sub( this.mesh.position );
+
+      //TODO move object creation outside of loop and reuse it. will be much more efficient.
   		var ray = new THREE.Raycaster( this.originPoint, directionVector.clone().normalize(), 0, directionVector.length() );
 
-      let collisionObj = null;
-
   		var intersectedObjects = ray.intersectObjects( collidables );
-      if (intersectedObjects.length > 0){
+      if (intersectedObjects.length > 0){ //if there is atleast one collision with the ray
+        //console.log(collision);
+        collision = true;
+        collisionObj = intersectedObjects[0].object;
+        this.currentCollisionUUID = collisionObj.uuid;
         //check if its a new collision and not an existing one
-        if (intersectedObjects[0].object.uuid != this.currentCollisionUUID){
-          collisionObj = intersectedObjects[0].object;
-          this.sendTrigger();
-          this.changeColor(collisionObj);
-          this.currentCollisionUUID = intersectedObjects[0].object.uuid; //set current collision to new collision
-        }
-      } else if(collisionObj != null){ //set collision uuid back to normal (null)
-        this.currentCollisionUUID = null;
-        collisionObj.material.color.setHex(0x6fa1a1);
-        collision = false;
+        vertHitCount += 1;
       }
 
   	}
 
+    if (collision && vertHitCount >= 2){
+
+      this.sendTrigger();
+      this.changeColor(collisionObj);
+    } else if (collisionObj != null){
+      collisionObj.material.color.setHex(0x6fa1a1);
+    }
+      // //check if the collision is with the same peg.
+      // if (intersectedObjects[0].object.uuid != this.currentCollisionUUID){
+      //   collision = true;
+      //   collisionObj = intersectedObjects[0].object;
+      //   this.sendTrigger();
+      //   this.changeColor(collisionObj);
+      //   this.currentCollisionUUID = intersectedObjects[0].object.uuid; //set current collision to new collision
+      // }
   }
 
   //
@@ -110,7 +123,7 @@ class Peg {
 
   //deal with changing color when collided
   changeColor(obj){
-    obj.material.color.setHex(0xFF0000);
+    obj.material.color.setHex(0xdc322f);
   }
 
 

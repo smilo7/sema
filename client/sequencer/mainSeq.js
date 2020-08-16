@@ -97,8 +97,8 @@ class MainSeq {
 
   testCylinders(){
     var cylinder = new Cylinder(this.scene, 0,10,0,false);
-		var cylinder2 = new Cylinder(this.scene, 20,10,0,false);
-		var cylinder3 = new Cylinder(this.scene, -30,10,-20,false);
+		var cylinder2 = new Cylinder(this.scene, 25,10,0,false);
+		var cylinder3 = new Cylinder(this.scene, -25,10,0,false);
     this.cylinders.push(cylinder, cylinder2, cylinder3); //add to store
   }
 

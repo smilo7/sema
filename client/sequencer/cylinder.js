@@ -65,16 +65,21 @@ class Cylinder {
 
   rotate(delta){
     this.mesh.rotation.y += this.rotationSpeed * delta;
-    //this.mesh.rotation.y += 0.01 //delta * 45000 * Math.PI / 180; //this.rotationSpeed;
+    //keep it between 0 and 1
+    if (this.mesh.rotation.y >= 1){
+      this.mesh.rotation.y == 0;
+    }
   }
 
 
 
   checkForCollisions(collidables){
+    console.log(this.mesh.rotation.y);
     //collidables is list of pegs that is attached to cylinder
     //loop through all pegs attached to cylinder
     this.pegs.forEach(function(each){
       //each.boundingBox();
+
       each.collision(collidables); //pass through collidables which is all the pegs.
     });
   }
