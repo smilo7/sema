@@ -6,13 +6,15 @@ class Cylinder {
   constructor (scene, x, y, z, edges=true){
     //spawn location of cylinder
     this.scene = scene;
-    this.rotationSpeed = 1;
+    this.rotationSpeed = 10;
+
     this.x = x;
     this.y = y;
     this.geometry = new THREE.CylinderGeometry( 5, 5, 20, 8, 6 );
     this.material = new THREE.MeshLambertMaterial( {color: 0x627aa1, vertexColors: THREE.VertexColors } );
     this.mesh = new THREE.Mesh(this.geometry, this.material);
     this.mesh.position.set(x,y,z);
+    this.rotationFraction = 0; //keeping track of where it is in its rotation.
     let helper = new FaceNormalsHelper( this.mesh, 2, 0x00ff00, 1 );
     //edges
     if (edges){
@@ -65,16 +67,21 @@ class Cylinder {
 
   rotate(delta){
     this.mesh.rotation.y += this.rotationSpeed * delta;
-    //keep it between 0 and 1
-    if (this.mesh.rotation.y >= 1){
-      this.mesh.rotation.y == 0;
+
+    this.rotationFraction += this.rotationSpeed * delta;
+
+    if (this.rotationFraction >= 1){
+      this.rotationFraction = 0; //reset it every full rotation
+      this.pegs.forEach(function(each){
+        each.resetHitList(); //clear the hitlist for the new roation.
+      });
     }
+
   }
 
 
 
   checkForCollisions(collidables){
-    console.log(this.mesh.rotation.y);
     //collidables is list of pegs that is attached to cylinder
     //loop through all pegs attached to cylinder
     this.pegs.forEach(function(each){

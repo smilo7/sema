@@ -5,7 +5,7 @@ class Peg {
   constructor(width, height, depth, x, y, z, face, scene){
     //this.scene = scene;
     this.chID;
-    this.signal = 30;
+    this.signal = 1;
     this.width = width;
     this.height = height;
     this.depth = depth;
@@ -20,6 +20,7 @@ class Peg {
     this.scene = scene;
     this.currentCollisionUUID = null;
     this.alreadyHitList = []; //this should get cleared every rotation
+    this.cylinderRotation = 0;
 
     //add to scene
     //this.scene.add( this.mesh );
@@ -99,11 +100,23 @@ class Peg {
 
   	}
 
-    if (collision && vertHitCount >= 2){
+    if (collision == true && vertHitCount >= 2){
 
-      this.sendTrigger();
-      this.changeColor(collisionObj);
-    } else if (collisionObj != null){
+      //check its not already hit
+      this.alreadyHitList.forEach(function(each){
+        if (each == collisionObj.uuid ){ //if its already been hit then set collision to false
+          collision = false;
+          collisionObj.material.color.setHex(0x6fa1a1);
+        }
+      });
+
+      if (collision){ //if its still a valid (new) collision event
+        this.sendTrigger();
+        this.changeColor(collisionObj);
+        this.alreadyHitList.push(collisionObj.uuid);
+      }
+
+    } else if (collisionObj != null){ //change colour back to normal
       collisionObj.material.color.setHex(0x6fa1a1);
     }
       // //check if the collision is with the same peg.
@@ -114,6 +127,10 @@ class Peg {
       //   this.changeColor(collisionObj);
       //   this.currentCollisionUUID = intersectedObjects[0].object.uuid; //set current collision to new collision
       // }
+  }
+
+  resetHitList(){
+    this.alreadyHitList = [];
   }
 
   //
