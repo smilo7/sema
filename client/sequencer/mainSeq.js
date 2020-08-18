@@ -88,6 +88,15 @@ class MainSeq {
       this.onMouseDown();
     });
 
+    //right click menu
+    this.renderer.domElement.addEventListener("mouseup", e => {
+      //if its right click
+      if (e.button == 2){
+        console.log("button type", e.button);
+      }
+      console.log("button type", e.button);
+    });
+
     // this.renderer.domElement.addEventListener("mouseup", e => {
     //   this.communicator.send();
     // });
@@ -143,7 +152,7 @@ class MainSeq {
 
     //this.communicator.reset();
     this.controls.update();
-		this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
+		this.pickHelper.pick(this.pickPosition, this.scene, this.camera); //mouse for hovering
     this.rotateAll(delta);
     this.renderer.render(this.scene, this.camera);
 

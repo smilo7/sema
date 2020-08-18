@@ -58,7 +58,7 @@ export class PickHelper {
     }
 	}
 
-  //placing cylinders
+  //placing pegs
   place(normalisedPosition, scene, camera){
     //getCanvasRelativePosition(canvas);
     this.raycaster.setFromCamera(normalisedPosition, camera)

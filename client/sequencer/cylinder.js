@@ -6,7 +6,7 @@ class Cylinder {
   constructor (scene, x, y, z, edges=true){
     //spawn location of cylinder
     this.scene = scene;
-    this.rotationSpeed = 10;
+    this.rotationSpeed = 5;
 
     this.x = x;
     this.y = y;

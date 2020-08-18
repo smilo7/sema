@@ -1,6 +1,7 @@
 var THREE = require('three');
 import { PubSub } from '../messaging/pubSub.js';
 
+
 class Peg {
   constructor(width, height, depth, x, y, z, face, scene){
     //this.scene = scene;
@@ -102,21 +103,25 @@ class Peg {
 
     if (collision == true && vertHitCount >= 2){
 
+      this.changeColor(collisionObj); //want colour to change for the whole collision
+
       //check its not already hit
       this.alreadyHitList.forEach(function(each){
         if (each == collisionObj.uuid ){ //if its already been hit then set collision to false
           collision = false;
-          collisionObj.material.color.setHex(0x6fa1a1);
+          //collisionObj.material.color.setHex(0x6fa1a1);
         }
       });
 
       if (collision){ //if its still a valid (new) collision event
         this.sendTrigger();
-        this.changeColor(collisionObj);
+
         this.alreadyHitList.push(collisionObj.uuid);
       }
 
-    } else if (collisionObj != null){ //change colour back to normal
+    }
+
+    if (collisionObj != null && collision == false){ //change colour back to normal
       collisionObj.material.color.setHex(0x6fa1a1);
     }
       // //check if the collision is with the same peg.
