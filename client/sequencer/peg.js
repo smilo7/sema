@@ -5,8 +5,9 @@ import { PubSub } from '../messaging/pubSub.js';
 class Peg {
   constructor(width, height, depth, x, y, z, face, scene){
     //this.scene = scene;
-    this.chID;
+    this.chID = 0;
     this.signal = 1;
+    this.trigger = true; //Whether to act as an audio trigger or not
     this.width = width;
     this.height = height;
     this.depth = depth;
@@ -115,7 +116,7 @@ class Peg {
 
       if (collision){ //if its still a valid (new) collision event
         this.sendTrigger();
-
+        //
         this.alreadyHitList.push(collisionObj.uuid);
       }
 
@@ -140,7 +141,8 @@ class Peg {
 
   //
   sendTrigger(){
-    this.messaging.publish("collision", this.signal);
+    console.log("COLLISION!");
+    this.messaging.publish("collision", {signal: this.signal, channel: this.chID});
   }
 
   //deal with changing color when collided

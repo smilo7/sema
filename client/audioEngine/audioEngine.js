@@ -101,10 +101,10 @@ class AudioEngine {
       }
     });
     this.messaging.subscribe("sequencerTrigger", e => {
-      //console.log("Recieved in audio engine", e);
-      if (this.sabs.seq) {
-        //console.log("sending", e);
-        this.sabs.seq.rb.push(new Float32Array([e]));
+      console.log("Recieved in audio engine", e);
+      let channel = e.channel;
+      if (this.sabs[channel] !== undefined) { //check channel (sab) exists
+        this.sabs[channel].rb.push(new Float32Array([e.signal])); //send off the signal to the correct sab channel
       }
     });
 		// this.messaging.subscribe("osc", e => console.log(`DEBUG:AudioEngine:OSC: ${e}`));
@@ -356,7 +356,13 @@ class AudioEngine {
 
       this.createSAB("mxy", "mouseXY", 2, this.audioWorkletNode.port);
       //            chID, ttype, blocksize, port
-      this.createSAB("seq", "sequencerTrigger", 1, this.audioWorkletNode.port);
+      //this.createSAB("seq", "sequencerTrigger", 1, this.audioWorkletNode.port);
+
+
+      //make 64 SAB channels that the pegs can use.
+      for (let i=0; i<=64; i++){
+        this.createSAB(i, "sequencerTrigger", 1, this.audioWorkletNode.port);
+      }
 
 		}
 	}

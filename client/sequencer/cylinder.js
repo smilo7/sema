@@ -65,6 +65,19 @@ class Cylinder {
     //this.pegGroup.add(this.pegs[this.pegs.length-1].getMesh());
   }
 
+  //gets peg for a given uuid
+  getPeg(uuid){
+
+    this.pegs.forEach(function(peg){
+      if (uuid === peg.mesh.uuid){
+        console.log("pegfound");
+      } else {
+        console.log("peg not found");
+      }
+    });
+    return this.peg;
+  }
+
   rotate(delta){
     this.mesh.rotation.y += this.rotationSpeed * delta;
 

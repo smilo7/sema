@@ -12,14 +12,15 @@ class Communicator {
 		this.messaging = new PubSub();
 	}
 
-	send(signal=1, channel){
-		console.log("SENDING SIGNAL");
-		this.messaging.publish("sequencerTrigger", signal);
+	send(signal, channel){
+		console.log("SENDING SIGNAL", signal, channel);
+		//send a dictionary of signal and channel
+		this.messaging.publish("sequencerTrigger", {signal:signal, channel:channel});
 	}
 
-	reset(){
-		//console.log("RESETTING");
-		this.messaging.publish("sequencerTrigger", 0);
+	reset(channel){
+		console.log("RESETTING");
+		this.messaging.publish("sequencerTrigger", {signal:0, channel:channel});
 	}
 
 }

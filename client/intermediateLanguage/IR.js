@@ -207,9 +207,13 @@ var jsFuncMap = {
 		loop:  (o, p) => `${o}.getSABValue(inputSABs, ${p.length==2 ? p[1].loop: 0})`
 	},
 	fromSeq: {
-    setup: (o, p) => ``,
-    loop:  (o, p) => `this.getSABValue('seq')`
+    setup: (o, p) => `${o} = new SABInputTransducer(${p[0].loop})`,
+    loop:  (o, p) => `${o}.getSABValue(inputSABs)`
   },
+	// fromSeq: {
+  //   setup: (o, p) => ``,
+  //   loop:  (o, p) => `this.getSABValue('seq')`
+  // },
 	mouseX: {
 		setup: (o, p) => ``,
 		loop:  (o, p) => `this.getSABValue('mxy')[0]`

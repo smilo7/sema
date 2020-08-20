@@ -176,6 +176,14 @@
 </style>
 
 
+<div id="pegMenu" style="position:absolute;display:none;background-color:red">
+  <span color="red">menu</span>
+  <br>
+  <button id="changeColor">
+    change color
+  </button>
+</div>
+
 <canvas bind:this={canvas}
         class="canvas"
 				id="glCanvas"

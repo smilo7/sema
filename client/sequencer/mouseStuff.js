@@ -96,6 +96,19 @@ export class PickHelper {
     }
   }
 
+	rightClickMenuPegs(normalisedPosition, pegs, camera){
+		this.raycaster.setFromCamera(normalisedPosition, camera)
+		// get the list of objects the ray intersected
+    const intersectedObjects = this.raycaster.intersectObjects(pegs);
+    if (intersectedObjects.length > 0) {
+			// pick the first object. It's the closest one
+      this.pickedObject = intersectedObjects[0].object;
+			console.log(this.pickedObject);
+			return this.pickedObject.uuid;
+		}
+		return undefined;
+	}
+
 	//calculates the center of the selected face (faces as there are two triangles)
 	//vertices are stored in the object
 	//arr contains index of face vertex locations in obj.geometry.vertices

@@ -36,11 +36,18 @@ class MainSeq {
     this.delta = 0;
     this.frames = 0;
     this.dcount = 0;
+    this.collisionEvent = {bool: false, channel:0}; //channel to reset
+
     //this.communicator.createSAB("collision", "collisionTrigger", 1, this.audioWorkletNode.port)
 
+
     this.messaging = new PubSub();
+    //recive messages from each peg when a collision happens
     this.messaging.subscribe("collision", e=> {
-      this.communicator.send(1, 0);
+      //console.log("e HERe", e, e.signal, e.channel);
+      this.communicator.send(e.signal, e.channel);
+      this.collisionEvent.bool = true; //set to true so audioEngineResetter then resets after two frames
+      this.collisionEvent.channel = e.channel;
     });
 
   }
@@ -82,19 +89,17 @@ class MainSeq {
 
     //listeners
     this.renderer.domElement.addEventListener("mousedown", e => {
-      //this.onMouseDown(e.clientX, e.clientY, this.scene);
-      //this.playPause();
-      this.communicator.reset();
-      this.onMouseDown();
+      if (e.button == 0){
+        this.leftClick();
+      }
     });
 
     //right click menu
     this.renderer.domElement.addEventListener("mouseup", e => {
       //if its right click
       if (e.button == 2){
-        console.log("button type", e.button);
+        this.rightClick();
       }
-      console.log("button type", e.button);
     });
 
     // this.renderer.domElement.addEventListener("mouseup", e => {
@@ -121,7 +126,8 @@ class MainSeq {
     }
   }
 
-  onMouseDown(){
+  //FOR PLACING PEGS
+  leftClick(){
     let raycastReturn = this.pickHelper.place(this.pickPosition, this.scene, this.camera);
     let selectedUUID = raycastReturn[0];
     let middleOfSelectedFace = raycastReturn[1]; //coords to spawn the peg at
@@ -138,6 +144,18 @@ class MainSeq {
         this.collidables = this.getCollidables();
         console.log(this.collidables);
       }
+    }
+  }
+
+  rightClick(){
+    let uuid = this.pickHelper.rightClickMenuPegs(this.pickPosition, this.collidables, this.camera);
+    if (uuid !== undefined){
+      //loop through cylinders and each child
+      this.cylinders.forEach(function(cylinder){
+        let pegs = cylinder.getPeg(uuid);
+      });
+    } else{
+      console.log("couldnt find peg");
     }
   }
 
@@ -161,14 +179,30 @@ class MainSeq {
   }
 
   audioEngineResetter(delta){
-    this.dcount += delta;
-    if (this.dcount >= 0.025){
-      this.dcount = 0;
-      this.communicator.reset();
+    //if collision signal recived (pubSub)
+    //count two frames
+    //send reset
+    //reset counter to 0
+
+    //WARNING this system means you can only have about 30 beats a second
+    //stops very dense polyrythms from getting made, but should be okay for now
+
+    let deltaCount = 0;
+    //console.log(this.collisionEvent);
+    if (this.collisionEvent.bool == true){
+      deltaCount += delta;
+      //console.log(deltaCount);
+      if (deltaCount >= 0.016){
+        deltaCount = 0;
+        this.communicator.reset(this.collisionEvent.channel); //send 0 to audioEngine
+
+        this.collisionEvent.bool = false; //finish collision event
+        this.collisionEvent.channel = 0;
+      }
     }
   }
 
-  //for each cylinders pegs,
+  //for each cylinders pegs, get their mesh and add it to list; collidables
   getCollidables(){
     let collidables = [];
     this.cylinders.forEach(function(each){
