@@ -173,15 +173,28 @@
     top: 50%; */
   }
 
+	.pegMenu {
+		background: #fff;
+		overflow: hidden;
+		margin: 0;
+		position: relative;
+	}
+
 </style>
 
 
 <div id="pegMenu" style="position:absolute;display:none;background-color:red">
-  <span color="red">menu</span>
-  <br>
-  <button id="changeColor">
-    change color
+  <span color="red">peg menu</span>
+
+  <button id="closePegMenu">
+    x
   </button>
+	<br>
+	<label for="lname">🔊</label>
+	<input type="checkbox" id="lname" name="lname">
+	<br>
+	<label for="channelPegMenu">🎚</label>
+	<input type="textbox" id="channelPegMenu" name="channelPegMenu" maxlength="2" size="1">
 </div>
 
 <canvas bind:this={canvas}

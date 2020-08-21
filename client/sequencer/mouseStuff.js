@@ -96,6 +96,7 @@ export class PickHelper {
     }
   }
 
+	//return UUID  of peg if right clicked
 	rightClickMenuPegs(normalisedPosition, pegs, camera){
 		this.raycaster.setFromCamera(normalisedPosition, camera)
 		// get the list of objects the ray intersected

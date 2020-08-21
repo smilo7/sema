@@ -150,6 +150,9 @@ class Peg {
     obj.material.color.setHex(0xdc322f);
   }
 
+  getMenuSettings(){
+    return {trigger:this.trigger, channel:this.chID, signal:this.signal};
+  }
 
 }
 

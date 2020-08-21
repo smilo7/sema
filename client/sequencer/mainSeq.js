@@ -102,6 +102,11 @@ class MainSeq {
       }
     });
 
+    closePegMenu.addEventListener("click", function(){
+    	//intersect.material.color.setHex(Math.random() * 0x777777 + 0x777777);
+      pegMenu.style.display = "none";
+    }, false);
+
     // this.renderer.domElement.addEventListener("mouseup", e => {
     //   this.communicator.send();
     // });
@@ -149,10 +154,23 @@ class MainSeq {
 
   rightClick(){
     let uuid = this.pickHelper.rightClickMenuPegs(this.pickPosition, this.collidables, this.camera);
+    let pos = this.pickPosition;
+    let rect = this.renderer.domElement.getBoundingClientRect();
     if (uuid !== undefined){
       //loop through cylinders and each child
       this.cylinders.forEach(function(cylinder){
-        let pegs = cylinder.getPeg(uuid);
+
+        let peg = cylinder.getPeg(uuid);
+
+        pegMenu.style.left = (pos.x) + "px";
+        pegMenu.style.top = (pos.y) + "px";
+        pegMenu.style.display = "";
+
+        let settings = peg.getMenuSettings();
+        console.log(settings);
+        //load values from peg
+        lname.checked = settings.trigger;
+
       });
     } else{
       console.log("couldnt find peg");
