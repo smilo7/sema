@@ -10,7 +10,7 @@ class Cylinder {
 
     this.x = x;
     this.y = y;
-    this.geometry = new THREE.CylinderGeometry( 5, 5, 20, 8, 6 );
+    this.geometry = new THREE.CylinderGeometry( 5, 5, 40, 8, 6 );
     this.material = new THREE.MeshLambertMaterial( {color: 0x627aa1, vertexColors: THREE.VertexColors } );
     this.mesh = new THREE.Mesh(this.geometry, this.material);
     this.mesh.position.set(x,y,z);
@@ -67,15 +67,23 @@ class Cylinder {
 
   //gets peg for a given uuid
   getPeg(uuid){
-
+    let found = undefined;
+    //find instance of peg with uuid
     this.pegs.forEach(function(peg){
+
       if (uuid === peg.mesh.uuid){
         console.log("pegfound");
+        found = peg;
       } else {
         console.log("peg not found");
       }
     });
-    return this.peg;
+
+    return found
+  }
+
+  getMenuSettings(){
+    return {rotationSpeed:this.rotationSpeed};
   }
 
   rotate(delta){

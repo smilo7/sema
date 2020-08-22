@@ -38,8 +38,9 @@ class MainSeq {
     this.dcount = 0;
     this.collisionEvent = {bool: false, channel:0}; //channel to reset
 
-    //this.communicator.createSAB("collision", "collisionTrigger", 1, this.audioWorkletNode.port)
-
+    //current peg being edited with menu
+    this.pegUsingMenu = null;
+    this.cylinderUsingMenu = null;
 
     this.messaging = new PubSub();
     //recive messages from each peg when a collision happens
@@ -87,25 +88,48 @@ class MainSeq {
     makeGrid(this.scene);
 		this.controls = new OrbitControls (this.camera, this.renderer.domElement);
 
-    //listeners
+    //listener for left click
     this.renderer.domElement.addEventListener("mousedown", e => {
       if (e.button == 0){
         this.leftClick();
       }
     });
 
-    //right click menu
+    //right click menus
     this.renderer.domElement.addEventListener("mouseup", e => {
       //if its right click
       if (e.button == 2){
-        this.rightClick();
+        let peg = this.rightClickPeg();
+        if (peg !== undefined){
+          this.loadPegMenu(peg, e.clientX, e.clientY);
+        }
+
+        let cylinder = this.rightClickCylinder();
+        if (cylinder !== undefined){
+          this.loadCylinderMenu(cylinder, e.clientX, e.clientY);
+        }
+
       }
     });
 
-    closePegMenu.addEventListener("click", function(){
-    	//intersect.material.color.setHex(Math.random() * 0x777777 + 0x777777);
+    closeCylinderMenu.addEventListener("click", e=> {
+      //save settings
+      this.cylinderUsingMenu.rotationSpeed = rotationCylinderMenu.value;
+      //make menu invisible
+      cylinderMenu.style.display = "none";
+    });
+
+    //event handler for close pegMenu button
+    closePegMenu.addEventListener("click", e=> {
+      //save settings
+      this.pegUsingMenu.trigger = triggerPegMenu.checked;
+      this.pegUsingMenu.chID = channelPegMenu.value;
+      this.pegUsingMenu.signal = signalPegMenu.value;
+      //make menu invisible
       pegMenu.style.display = "none";
-    }, false);
+    });
+
+
 
     // this.renderer.domElement.addEventListener("mouseup", e => {
     //   this.communicator.send();
@@ -115,9 +139,9 @@ class MainSeq {
   }
 
   testCylinders(){
-    var cylinder = new Cylinder(this.scene, 0,10,0,false);
-		var cylinder2 = new Cylinder(this.scene, 25,10,0,false);
-		var cylinder3 = new Cylinder(this.scene, -25,10,0,false);
+    var cylinder = new Cylinder(this.scene, 0,20,0,false);
+		var cylinder2 = new Cylinder(this.scene, 25,20,0,false);
+		var cylinder3 = new Cylinder(this.scene, -25,20,0,false);
     this.cylinders.push(cylinder, cylinder2, cylinder3); //add to store
   }
 
@@ -152,29 +176,84 @@ class MainSeq {
     }
   }
 
-  rightClick(){
-    let uuid = this.pickHelper.rightClickMenuPegs(this.pickPosition, this.collidables, this.camera);
-    let pos = this.pickPosition;
+  rightClickCylinder(){
+    let cylinderMeshes = [];
+
+    this.cylinders.forEach(function(each){
+      cylinderMeshes.push(each.mesh);
+    });
+
+    let uuid = this.pickHelper.rightClickMenu(this.pickPosition, cylinderMeshes, this.camera);
+    let cylinder = this.getCylinder(uuid);
+    return cylinder;
+  }
+
+  getCylinder(uuid){
+    let found = undefined;
+    //find instance of cylinder with uuid
+    this.cylinders.forEach(function(each){
+      if (uuid === each.mesh.uuid){
+        found = each;
+      }
+    });
+    return found
+  }
+
+  loadCylinderMenu(cylinder, eventX, eventY){
     let rect = this.renderer.domElement.getBoundingClientRect();
+
+    //pegMenu references html div
+    cylinderMenu.style.left = (eventX - rect.left) + "px";
+    cylinderMenu.style.top = (eventY - rect.top) + "px";
+    cylinderMenu.style.display = "";
+
+    let settings = cylinder.getMenuSettings();
+
+    //load values from peg into menu elements
+    rotationCylinderMenu.value = settings.rotationSpeed;
+
+    this.cylinderUsingMenu = cylinder;
+    console.log(this.cylinderUsingMenu);
+  }
+
+  rightClickPeg(){
+    let uuid = this.pickHelper.rightClickMenu(this.pickPosition, this.collidables, this.camera);
+    let peg = undefined;
     if (uuid !== undefined){
       //loop through cylinders and each child
       this.cylinders.forEach(function(cylinder){
-
-        let peg = cylinder.getPeg(uuid);
-
-        pegMenu.style.left = (pos.x) + "px";
-        pegMenu.style.top = (pos.y) + "px";
-        pegMenu.style.display = "";
-
-        let settings = peg.getMenuSettings();
-        console.log(settings);
-        //load values from peg
-        lname.checked = settings.trigger;
-
-      });
-    } else{
-      console.log("couldnt find peg");
+        let present = cylinder.getPeg(uuid);
+        if (present !== undefined){
+          peg = present;
+          console.log("peg here", peg);
+         }
+        });
     }
+    return peg;
+  }
+
+  loadPegMenu(peg, eventX, eventY){
+    let rect = this.renderer.domElement.getBoundingClientRect();
+
+    //pegMenu references html div
+    pegMenu.style.left = (eventX - rect.left) + "px";
+    pegMenu.style.top = (eventY - rect.top) + "px";
+    pegMenu.style.display = "";
+
+    let settings = peg.getMenuSettings();
+    console.log(settings);
+    //load values from peg into menu elements
+    triggerPegMenu.checked = settings.trigger;
+    channelPegMenu.value = settings.channel;
+    signalPegMenu.value = settings.signal;
+
+    this.pegUsingMenu = peg;
+    console.log(this.pegUsingMenu);
+  }
+
+  saveMenuValues(){
+    this.pegUsingMenu.trigger = triggerPegMenu.checked;
+    this.pegUsingMenu.channel = channelPegMenu.value;
   }
 
 
@@ -188,7 +267,7 @@ class MainSeq {
 
     //this.communicator.reset();
     this.controls.update();
-		this.pickHelper.pick(this.pickPosition, this.scene, this.camera); //mouse for hovering
+		this.pickHelper.pick(this.pickPosition, this.scene, this.camera); //mouse for hovering on cylinder faces
     this.rotateAll(delta);
     this.renderer.render(this.scene, this.camera);
 
@@ -212,7 +291,12 @@ class MainSeq {
       //console.log(deltaCount);
       if (deltaCount >= 0.016){
         deltaCount = 0;
+
         this.communicator.reset(this.collisionEvent.channel); //send 0 to audioEngine
+        this.communicator.reset(0);
+        this.communicator.reset(1);
+        this.communicator.reset(2);
+        //this.communicator.reset(this.collisionEvent.channel);
 
         this.collisionEvent.bool = false; //finish collision event
         this.collisionEvent.channel = 0;
@@ -355,6 +439,12 @@ var selectionColor = new THREE.Color( 0xff0000 );
 function makeGrid(scene){
 	let gridXZ = new THREE.GridHelper(100, 10, new THREE.Color(0x586e75), new THREE.Color(0x073642));
 	//gridXZ.setColors( new THREE.Color(0xff0000), new THREE.Color(0xffffff) );
+  //add plane
+  var geometry = new THREE.PlaneBufferGeometry( 100, 100 );
+	geometry.rotateX( - Math.PI / 2 );
+
+	let plane = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { visible: true } ) );
+	scene.add( plane );
 	scene.add(gridXZ);
 }
 

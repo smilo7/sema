@@ -174,27 +174,47 @@
   }
 
 	.pegMenu {
-		background: #fff;
+		background: #fcba03;
 		overflow: hidden;
-		margin: 0;
+		margin: 1;
+		position: relative;
+	}
+
+	.cylinderMenu {
+		background: #fcba03;
+		overflow: hidden;
+		margin: 1;
 		position: relative;
 	}
 
 </style>
 
 
-<div id="pegMenu" style="position:absolute;display:none;background-color:red">
+<div id="pegMenu" style="position:absolute;display:none;background-color:white">
   <span color="red">peg menu</span>
 
   <button id="closePegMenu">
     x
   </button>
 	<br>
-	<label for="lname">🔊</label>
-	<input type="checkbox" id="lname" name="lname">
+	<label for="triggerPegMenu">🔊</label>
+	<input type="checkbox" id="triggerPegMenu" name="triggerPegMenu">
 	<br>
 	<label for="channelPegMenu">🎚</label>
 	<input type="textbox" id="channelPegMenu" name="channelPegMenu" maxlength="2" size="1">
+	<label for="signalPegMenu">signal</label>
+	<input type="textbox" id="signalPegMenu" name="signalPegMenu" maxlength="3" size="3">
+</div>
+
+<div id="cylinderMenu" style="position:absolute;display:none;background-color:white">
+  <span color="red">cylinder menu</span>
+	<button id="closeCylinderMenu">
+    x
+  </button>
+
+	<label for="rotationCylinderMenu">speed</label>
+	<input type="textbox" id="rotationCylinderMenu" name="rotationCylinderMenu" maxlength="3" size="3">
+
 </div>
 
 <canvas bind:this={canvas}

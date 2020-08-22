@@ -141,8 +141,10 @@ class Peg {
 
   //
   sendTrigger(){
-    console.log("COLLISION!");
-    this.messaging.publish("collision", {signal: this.signal, channel: this.chID});
+    if (this.trigger){
+      console.log("COLLISION!");
+      this.messaging.publish("collision", {signal: this.signal, channel: this.chID});
+    }
   }
 
   //deal with changing color when collided
