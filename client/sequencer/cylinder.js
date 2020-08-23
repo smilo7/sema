@@ -3,14 +3,19 @@ import {Peg} from '../sequencer/peg.js';
 import {FaceNormalsHelper} from '../sequencer/FaceNormalsHelper.js';
 
 class Cylinder {
-  constructor (scene, x, y, z, edges=true){
+  constructor (scene, x, y, z, height, radius, segments, edges=true){
     //spawn location of cylinder
     this.scene = scene;
     this.rotationSpeed = 5;
 
     this.x = x;
     this.y = y;
-    this.geometry = new THREE.CylinderGeometry( 5, 5, 40, 8, 6 );
+    this.z = z;
+    this.height = height;
+    this.radius = radius;
+    this.segments = segments;
+    //this.geometry = new THREE.CylinderGeometry( 5, 5, 40, 8, 6 );
+    this.geometry = new THREE.CylinderGeometry( radius, radius, height, segments, 8);
     this.material = new THREE.MeshLambertMaterial( {color: 0x627aa1, vertexColors: THREE.VertexColors } );
     this.mesh = new THREE.Mesh(this.geometry, this.material);
     this.mesh.position.set(x,y,z);
@@ -44,7 +49,10 @@ class Cylinder {
 
   addPeg(x, y, z, face){
 
-    this.pegs.push(new Peg(3,3,10, x*2, y, z*2, face, this.scene));
+    //this.pegs.push(new Peg(3,3,10, x*2, y, z*2, face, this.scene));
+    let dimensions = this.calcFaceDimensions(face);
+    let depth = this.radius*2;
+    this.pegs.push(new Peg(dimensions.width,dimensions.height,depth, x*(depth/this.radius), y, z*(depth/this.radius), face, this.scene));
     //add peg as child of cylinder mesh
     let newPeg = this.pegs[this.pegs.length-1]
     newPeg.mesh.lookAt(face.normal);
@@ -63,6 +71,22 @@ class Cylinder {
     //console.log(this.pegGroup);
     //add the most recently added peg to the pegGroup
     //this.pegGroup.add(this.pegs[this.pegs.length-1].getMesh());
+  }
+
+  calcFaceDimensions(face){
+    let va = this.geometry.vertices[face.a];
+    let vb = this.geometry.vertices[face.b];
+    let vc = this.geometry.vertices[face.c];
+
+    let d1 = vb.distanceTo(va);
+    let d2 = vb.distanceTo(vc);
+
+    var t = new THREE.Triangle(va,vb,vc);
+    var area = t.getArea();
+
+    let a = Math.sqrt(area);
+
+    return {width: a, height:a};
   }
 
   //gets peg for a given uuid

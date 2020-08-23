@@ -110,6 +110,38 @@ export class PickHelper {
 		return undefined;
 	}
 
+
+	//hover cylinder rollover
+	placeCylinder(normalisedPosition, objects, camera, rolloverCylinder){
+		this.raycaster.setFromCamera(normalisedPosition, camera);
+		const intersectedObjects = this.raycaster.intersectObjects([objects]);
+    if (intersectedObjects.length > 0) {
+			this.pickedObject = intersectedObjects[0].object;
+			let intersect = intersectedObjects[0];
+			//console.log(this.pickedObject);
+				rolloverCylinder.position.copy( intersect.point ).add( intersect.face.normal );
+				rolloverCylinder.position.divideScalar( 10 ).floor().multiplyScalar( 10 ).addScalar( 5 );
+				rolloverCylinder.position.y += -5;
+		}
+
+	}
+
+	//handling right clicking on plane
+	createCylinder(normalisedPosition, object, scene, camera){
+		this.raycaster.setFromCamera(normalisedPosition, camera);
+		const intersectedObjects = this.raycaster.intersectObjects(scene.children);
+		console.log(intersectedObjects);
+    if (intersectedObjects.length > 0) {
+			console.log(intersectedObjects[1].object.geometry);
+			console.log(intersectedObjects[1].object.uuid, object.uuid)
+			if (intersectedObjects[1].object.uuid === object.uuid){
+				console.log("ASDJHKASD");
+				return true;
+			}
+		}
+		return false;
+	}
+
 	//calculates the center of the selected face (faces as there are two triangles)
 	//vertices are stored in the object
 	//arr contains index of face vertex locations in obj.geometry.vertices

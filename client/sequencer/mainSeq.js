@@ -27,6 +27,10 @@ class MainSeq {
     this.cylinders = [];
     this.collidables = this.getCollidables();
 
+    this.floorPlane;
+    this.rolloverCylinder;
+    this.doRollover = true; //whether to activate the rollover icon
+
     //Communicator
     this.communicator =  new Communicator();
 
@@ -85,6 +89,8 @@ class MainSeq {
 
     this.setCamera(width, height);
     this.lights();
+    this.makeFloor();
+    this.rolloverCylinder = this.makeRolloverCylinder();
     makeGrid(this.scene);
 		this.controls = new OrbitControls (this.camera, this.renderer.domElement);
 
@@ -109,6 +115,11 @@ class MainSeq {
           this.loadCylinderMenu(cylinder, e.clientX, e.clientY);
         }
 
+
+        if (this.pickHelper.createCylinder(this.pickPosition, this.floorPlane, this.scene, this.camera)){
+          this.createCylinderMenu(e.clientX, e.clientY);
+        }
+
       }
     });
 
@@ -129,6 +140,23 @@ class MainSeq {
       pegMenu.style.display = "none";
     });
 
+    closeCreateCylinderMenu.addEventListener("click", e=> {
+      //make menu invisible
+      createCylinderMenu.style.display = "none";
+      this.doRollover = true;
+    });
+
+    saveCreateCylinderMenu.addEventListener("click", e=> {
+      let height = heightCreateCylinderMenu.value;
+      let radius = radiusCreateCylinderMenu.value;
+      let segments = segmentsCreateCylinderMenu.value;
+
+      this.constructCylinderFromMenu(height, radius, segments);
+      //make menu invisible
+      createCylinderMenu.style.display = "none";
+    });
+
+
 
 
     // this.renderer.domElement.addEventListener("mouseup", e => {
@@ -138,10 +166,27 @@ class MainSeq {
     console.log(this.canvas);
   }
 
+  makeFloor(){
+    //add plane
+    var geometry = new THREE.PlaneBufferGeometry( 1000, 1000 );
+  	geometry.rotateX( - Math.PI / 2 );
+  	this.floorPlane = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { visible: false } ) );
+  	this.scene.add( this.floorPlane );
+  }
+
+  makeRolloverCylinder(){
+    let rollOverGeo = new THREE.BoxGeometry( 10, 1, 10 );
+    //let rollOverGeo = new THREE.CylinderGeometry( 5, 5, 1, 8, 6 );
+		let rollOverMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, opacity: 0.5, transparent: true } );
+		let rollOverMesh = new THREE.Mesh( rollOverGeo, rollOverMaterial );
+		this.scene.add( rollOverMesh );
+    return rollOverMesh;
+  }
+
   testCylinders(){
-    var cylinder = new Cylinder(this.scene, 0,20,0,false);
-		var cylinder2 = new Cylinder(this.scene, 25,20,0,false);
-		var cylinder3 = new Cylinder(this.scene, -25,20,0,false);
+    var cylinder = new Cylinder(this.scene, 0,20,0, 40,5,8, false);
+		var cylinder2 = new Cylinder(this.scene, 25,20,0, 40,5,8,false);
+		var cylinder3 = new Cylinder(this.scene, -25,20,0, 40,5,8,false);
     this.cylinders.push(cylinder, cylinder2, cylinder3); //add to store
   }
 
@@ -251,10 +296,30 @@ class MainSeq {
     console.log(this.pegUsingMenu);
   }
 
-  saveMenuValues(){
-    this.pegUsingMenu.trigger = triggerPegMenu.checked;
-    this.pegUsingMenu.channel = channelPegMenu.value;
+  //menu for making a cylinder
+  createCylinderMenu(eventX, eventY){
+
+    //freeze the rollover, so that menu will create cylinder at correct location
+    this.doRollover = false;
+
+    let rect = this.renderer.domElement.getBoundingClientRect();
+
+    //pegMenu references html div
+    createCylinderMenu.style.left = (eventX - rect.left) + "px";
+    createCylinderMenu.style.top = (eventY - rect.top) + "px";
+    createCylinderMenu.style.display = "";
   }
+
+  //actually create the cylinder from the menu values;
+  constructCylinderFromMenu(height, radius, segments){
+    let x = this.rolloverCylinder.position.x;
+    let y = this.rolloverCylinder.position.y;
+    let z = this.rolloverCylinder.position.z;
+    this.cylinders.push(new Cylinder(this.scene, x,y,z, height, radius, segments, false));
+    this.doRollover = true;
+  }
+
+
 
 
   updateEverything(){
@@ -268,7 +333,14 @@ class MainSeq {
     //this.communicator.reset();
     this.controls.update();
 		this.pickHelper.pick(this.pickPosition, this.scene, this.camera); //mouse for hovering on cylinder faces
+
     this.rotateAll(delta);
+
+
+    if (this.doRollover == true){
+      this.pickHelper.placeCylinder(this.pickPosition, this.floorPlane, this.camera, this.rolloverCylinder);
+    }
+
     this.renderer.render(this.scene, this.camera);
 
 
@@ -437,14 +509,8 @@ class MainSeq {
 var selectionColor = new THREE.Color( 0xff0000 );
 
 function makeGrid(scene){
-	let gridXZ = new THREE.GridHelper(100, 10, new THREE.Color(0x586e75), new THREE.Color(0x073642));
+	let gridXZ = new THREE.GridHelper(1000, 100, new THREE.Color(0x586e75), new THREE.Color(0x073642));
 	//gridXZ.setColors( new THREE.Color(0xff0000), new THREE.Color(0xffffff) );
-  //add plane
-  var geometry = new THREE.PlaneBufferGeometry( 100, 100 );
-	geometry.rotateX( - Math.PI / 2 );
-
-	let plane = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { visible: true } ) );
-	scene.add( plane );
 	scene.add(gridXZ);
 }
 

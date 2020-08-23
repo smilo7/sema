@@ -191,7 +191,7 @@
 
 
 <div id="pegMenu" style="position:absolute;display:none;background-color:white">
-  <span color="red">peg menu</span>
+  <span color="red">Peg Settings</span>
 
   <button id="closePegMenu">
     x
@@ -207,14 +207,33 @@
 </div>
 
 <div id="cylinderMenu" style="position:absolute;display:none;background-color:white">
-  <span color="red">cylinder menu</span>
+  <span color="red">Cylinder Settings</span>
 	<button id="closeCylinderMenu">
     x
   </button>
 
 	<label for="rotationCylinderMenu">speed</label>
 	<input type="textbox" id="rotationCylinderMenu" name="rotationCylinderMenu" maxlength="3" size="3">
+</div>
 
+<div id="createCylinderMenu" style="position:absolute;display:none;background-color:white">
+  <span color="red"><b>Make Cylinder</b></span>
+	<button id="closeCreateCylinderMenu">
+    x
+  </button>
+	<hr>
+	<label for="heightCreateCylinderMenu">Height</label>
+	<input type="textbox" id="heightCreateCylinderMenu" name="heightCreateCylinderMenu" maxlength="3" size="3">
+
+	<label for="radiusCreateCylinderMenu">Radius</label>
+	<input type="textbox" id="radiusCreateCylinderMenu" name="radiusCreateCylinderMenu" maxlength="3" size="3">
+
+	<label for="segmentsCreateCylinderMenu">Segments</label>
+	<input type="textbox" id="segmentsCreateCylinderMenu" name="segmentsCreateCylinderMenu" maxlength="3" size="3">
+	<br>
+	<button id="saveCreateCylinderMenu">
+    Save
+  </button>
 </div>
 
 <canvas bind:this={canvas}
