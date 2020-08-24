@@ -14,8 +14,9 @@ class Peg {
     this.x = x;
     this.y = y;
     this.z = z;
+    this.color = {normal:0x6fa1a1, collision:0xFF0000};
     this.geometry = new THREE.BoxGeometry( this.width, this.height, this.depth );
-    this.material = new THREE.MeshLambertMaterial( {color: 0x6fa1a1} );
+    this.material = new THREE.MeshLambertMaterial( {color: this.color.normal} );
     this.mesh = new THREE.Mesh( this.geometry, this.material );
     this.face = face;
     this.code = '';
@@ -104,7 +105,8 @@ class Peg {
 
     if (collision == true && vertHitCount >= 2){
 
-      this.changeColor(collisionObj); //want colour to change for the whole collision
+      //this.changeColor(collisionObj); //want colour to change for the whole collision
+
 
       //check its not already hit
       this.alreadyHitList.forEach(function(each){
@@ -116,14 +118,15 @@ class Peg {
 
       if (collision){ //if its still a valid (new) collision event
         this.sendTrigger();
-        //
+        collisionObj.material.color.setHex(this.color.collision);
+        //add to list of already hit pegs so it doesnt trigger again
         this.alreadyHitList.push(collisionObj.uuid);
       }
 
     }
 
     if (collisionObj != null && collision == false){ //change colour back to normal
-      collisionObj.material.color.setHex(0x6fa1a1);
+      collisionObj.material.color.setHex(this.color.normal);
     }
       // //check if the collision is with the same peg.
       // if (intersectedObjects[0].object.uuid != this.currentCollisionUUID){

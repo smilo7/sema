@@ -96,14 +96,16 @@ class Cylinder {
     this.pegs.forEach(function(peg){
 
       if (uuid === peg.mesh.uuid){
-        console.log("pegfound");
         found = peg;
-      } else {
-        console.log("peg not found");
       }
+      
     });
 
     return found
+  }
+
+  getPegList(){
+    return this.pegs;
   }
 
   getMenuSettings(){

@@ -178,6 +178,7 @@
 		overflow: hidden;
 		margin: 1;
 		position: relative;
+		font-family: monospace;
 	}
 
 	.cylinderMenu {
@@ -185,18 +186,19 @@
 		overflow: hidden;
 		margin: 1;
 		position: relative;
+		font-family: monospace;
 	}
 
 </style>
 
 
-<div id="pegMenu" style="position:absolute;display:none;background-color:white">
-  <span color="red">Peg Settings</span>
+<div id="pegMenu" style="position:absolute;display:none;background-color:white;font-family:monospace">
+  <span color="red"><b>Peg Settings</b></span>
 
   <button id="closePegMenu">
     x
   </button>
-	<br>
+	<hr>
 	<label for="triggerPegMenu">🔊</label>
 	<input type="checkbox" id="triggerPegMenu" name="triggerPegMenu">
 	<br>
@@ -206,18 +208,19 @@
 	<input type="textbox" id="signalPegMenu" name="signalPegMenu" maxlength="3" size="3">
 </div>
 
-<div id="cylinderMenu" style="position:absolute;display:none;background-color:white">
-  <span color="red">Cylinder Settings</span>
+<div id="cylinderMenu" style="position:absolute;display:none;background-color:white;font-family:monospace">
+  <span color="red"><b>Cylinder Settings</b></span>
 	<button id="closeCylinderMenu">
     x
   </button>
+	<hr>
 
 	<label for="rotationCylinderMenu">speed</label>
 	<input type="textbox" id="rotationCylinderMenu" name="rotationCylinderMenu" maxlength="3" size="3">
 </div>
 
-<div id="createCylinderMenu" style="position:absolute;display:none;background-color:white">
-  <span color="red"><b>Make Cylinder</b></span>
+<div id="createCylinderMenu" style="position:absolute;display:none;background-color:white;font-family:monospace">
+  <span color="red"><b>Create Cylinder</b></span>
 	<button id="closeCreateCylinderMenu">
     x
   </button>
@@ -232,7 +235,7 @@
 	<input type="textbox" id="segmentsCreateCylinderMenu" name="segmentsCreateCylinderMenu" maxlength="3" size="3">
 	<br>
 	<button id="saveCreateCylinderMenu">
-    Save
+    Create
   </button>
 </div>
 

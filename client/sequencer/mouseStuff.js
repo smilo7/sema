@@ -11,8 +11,8 @@ export class PickHelper {
 		this.pickedObjectSavedColor = 0;
 		this.faceIdx1 = -1, this.faceIdx2 = -1; //selected face ids
 		this.pickedFace = null;
-		this.pickedFaceSavedColor = 0;
-    this.selectionColor = new THREE.Color( 0x2aa198 );
+		this.pickedFaceSavedColor = new THREE.Color(0x97abcc);
+    this.selectionColor = new THREE.Color( 0xFF6347 );
 	}
 
   //for changing the colour of the cylinder faces upon the mouse hovering
@@ -22,12 +22,17 @@ export class PickHelper {
 	  if (this.pickedObject != null && this.pickedObject.geometry.type == 'CylinderGeometry') {
 			//console.log(this.pickedObjectSavedColor);
 			setFaceColor(this.faceIdx1, this.pickedObjectSavedColor, this.pickedObject);
-			setFaceColor(this.faceIdx2, this.pickedObjectSavedColor , this.pickedObject);
+			setFaceColor(this.faceIdx2, this.pickedObjectSavedColor, this.pickedObject);
+			//this.pickedObject.material.emissive.setHex(this.pickedObjectSavedColor);
 			this.pickedObject.material.color.setHex(this.pickedObjectSavedColor);
 			//this.pickedObject.geometry.faces[this.faceIdx1];
 
 	    this.pickedObject = null;
+			//this.faceIdx1 = -1;
+			//this.faceIdx2 = -1;
 		}
+
+
 
 
 		this.raycaster.setFromCamera(normalisedPosition, camera)
@@ -42,7 +47,7 @@ export class PickHelper {
 				this.faceIdx1 = intersectedObjects[0].faceIndex;
 				this.faceIdx2 = this.faceIdx1 % 2 === 0 ? this.faceIdx1 + 1: this.faceIdx1 - 1;
 				//save face color
-				this.pickedFaceSavedColor = this.pickedObject.geometry.faces[this.faceIdx1].color.getHex();
+				this.pickedFaceSavedColor = new THREE.Color(this.pickedObject.geometry.faces[this.faceIdx1].color.getHex());
 
 				//console.log(this.pickedObject.geometry.faces[this.faceIdx1].vertexNormals);
 				//makeShape(this.pickedObject.geometry.faces[this.faceIdx1].vertexNormals);
@@ -52,7 +57,9 @@ export class PickHelper {
 				setFaceColor(this.faceIdx2, this.selectionColor, this.pickedObject);
 	      // save its color
 	      this.pickedObjectSavedColor = this.pickedObject.material.color.getHex();
+				//this.pickedObjectSavedColor = this.pickedObject.material.emissive.getHex();
 	      // set its emissive color to yellow
+				//this.pickedObject.material.emissive.setHex(0x97abcc);
 				this.pickedObject.material.color.setHex(0x97abcc);
 			}
     }

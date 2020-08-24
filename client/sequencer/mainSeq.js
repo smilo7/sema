@@ -105,6 +105,7 @@ class MainSeq {
     this.renderer.domElement.addEventListener("mouseup", e => {
       //if its right click
       if (e.button == 2){
+
         let peg = this.rightClickPeg();
         if (peg !== undefined){
           this.loadPegMenu(peg, e.clientX, e.clientY);
@@ -115,11 +116,15 @@ class MainSeq {
           this.loadCylinderMenu(cylinder, e.clientX, e.clientY);
         }
 
+      }
+    });
 
+    //double click to place cylinder
+    this.renderer.domElement.addEventListener("dblclick", e => {
+      if (e.button == 0){
         if (this.pickHelper.createCylinder(this.pickPosition, this.floorPlane, this.scene, this.camera)){
           this.createCylinderMenu(e.clientX, e.clientY);
         }
-
       }
     });
 
@@ -175,7 +180,8 @@ class MainSeq {
   }
 
   makeRolloverCylinder(){
-    let rollOverGeo = new THREE.BoxGeometry( 10, 1, 10 );
+    let height = 0.1;
+    let rollOverGeo = new THREE.BoxGeometry( 10, height, 10 );
     //let rollOverGeo = new THREE.CylinderGeometry( 5, 5, 1, 8, 6 );
 		let rollOverMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, opacity: 0.5, transparent: true } );
 		let rollOverMesh = new THREE.Mesh( rollOverGeo, rollOverMaterial );
@@ -211,12 +217,12 @@ class MainSeq {
     for (let i=0;i<this.cylinders.length;i++){
       if (selectedUUID === this.cylinders[i].uuid){
         let selectedCylinder = this.cylinders[i];
-        console.log("clicked", this.cylinders[i].uuid);
-        console.log(middleOfSelectedFace);
+        //console.log("clicked", this.cylinders[i].uuid);
+        //console.log(middleOfSelectedFace);
         selectedCylinder.addPeg(middleOfSelectedFace.x, middleOfSelectedFace.y, middleOfSelectedFace.z, rotateToFace);
         //update list of getCollidables
         this.collidables = this.getCollidables();
-        console.log(this.collidables);
+        //console.log(this.collidables);
       }
     }
   }
@@ -262,7 +268,7 @@ class MainSeq {
   }
 
   rightClickPeg(){
-    let uuid = this.pickHelper.rightClickMenu(this.pickPosition, this.collidables, this.camera);
+    let uuid = this.pickHelper.rightClickMenu(this.pickPosition, this.getAllPegMesh(), this.camera);
     let peg = undefined;
     if (uuid !== undefined){
       //loop through cylinders and each child
@@ -312,8 +318,9 @@ class MainSeq {
 
   //actually create the cylinder from the menu values;
   constructCylinderFromMenu(height, radius, segments){
+    //make at position of rollover;
     let x = this.rolloverCylinder.position.x;
-    let y = this.rolloverCylinder.position.y;
+    let y = this.rolloverCylinder.position.y + (height/2);
     let z = this.rolloverCylinder.position.z;
     this.cylinders.push(new Cylinder(this.scene, x,y,z, height, radius, segments, false));
     this.doRollover = true;
@@ -377,26 +384,61 @@ class MainSeq {
   }
 
   //for each cylinders pegs, get their mesh and add it to list; collidables
-  getCollidables(){
+  getCollidables2(){
     let collidables = [];
-    this.cylinders.forEach(function(each){
-
-      if (each.mesh.children.length > 0){
-        each.mesh.children.forEach(function(peg){
-          collidables.push(peg);
+    this.cylinders.forEach(function(cylinder, index){
+      let individualList = []; //list for each cylinder
+      if (cylinder.mesh.children.length > 0){ //check it has more than 0 pegs
+        cylinder.mesh.children.forEach(function(peg){
+          if (cylinder.getPeg(peg.uuid) === undefined){ //if its not the cylinders own peg
+            individualList.push(peg);
+          }
         });
       }
+      collidables.push(individualList);
     });
 
     return collidables
   }
 
+  //returns a nested array of collidable pegs for each cylinder.
+  getCollidables(){
+    let collidables = [];
+    let pegsList = this.getAllPegMesh();
+
+    this.cylinders.forEach(function(cylinder, index){
+      let individualList = []; //list for each cylinder
+      if (cylinder.mesh.children.length > 0){ //check it has more than 0 pegs
+        pegsList.forEach(function(peg){
+          if (cylinder.getPeg(peg.uuid) === undefined){ //if its not the cylinders own peg
+            individualList.push(peg);
+          }
+        });
+      }
+      collidables.push(individualList);
+    });
+    console.log(collidables);
+    return collidables;
+  }
+
+  getAllPegMesh(){
+    let pegsList = [];
+    this.cylinders.forEach(function(cylinder){
+      pegsList.push(...cylinder.getPegList());
+    });
+    let meshes = []
+    pegsList.forEach(function(peg){
+      meshes.push(peg.mesh);
+    });
+    return meshes;
+  }
+
   collisionCheck(){
     let collidables = this.collidables;
     if (this.playing){
-      this.cylinders.forEach(function(each){
+      this.cylinders.forEach(function(each, index){
         //console.log(collidables);
-        each.checkForCollisions(collidables);
+        each.checkForCollisions(collidables[index]);
       });
     }
   }
