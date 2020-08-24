@@ -73,9 +73,9 @@ class MainSeq {
 
   setCamera(width, height){
     this.camera = new THREE.PerspectiveCamera (45, width/height, 1, 10000);
-    this.camera.position.y = 160;
+    this.camera.position.y = 100;
     this.camera.position.z = 200;
-    this.camera.lookAt (new THREE.Vector3(0,0,0));
+    this.camera.lookAt(new THREE.Vector3(0,0,0));
   }
 
   init() {
@@ -85,7 +85,7 @@ class MainSeq {
     this.renderer.setSize (width, height);
     this.scene = new THREE.Scene();
 
-		this.testCylinders();
+		//this.testCylinders();
 
     this.setCamera(width, height);
     this.lights();

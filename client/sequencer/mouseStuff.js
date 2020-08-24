@@ -13,7 +13,7 @@ export class PickHelper {
 		this.faceIdx1 = -1, this.faceIdx2 = -1; //selected face ids
 		this.hoverFace = null;
 		this.hoverFaceSavedColor = new THREE.Color(0x6fa1a1);
-    this.selectionColor = new THREE.Color( 0xFF6347 );
+    this.selectionColor = new THREE.Color( 0x7CFC00 );
 	}
 
   //for changing the colour of the cylinder faces upon the mouse hovering
@@ -59,7 +59,7 @@ export class PickHelper {
 				//this.hoverObjectSavedColor = this.hoverObject.material.emissive.getHex();
 	      // set its emissive color to yellow
 				//this.hoverObject.material.emissive.setHex(0x97abcc);
-				this.hoverObject.material.color.setHex(0x97abcc);
+				this.hoverObject.material.color.setHex(0x839496);
 			}
     }
 	}

@@ -17,7 +17,7 @@ class Cylinder {
     //this.geometry = new THREE.CylinderGeometry( 5, 5, 40, 8, 6 );
     this.geometry = new THREE.CylinderGeometry( radius, radius, height, segments, 8);
     //this.material = new THREE.MeshLambertMaterial( {color: 0x627aa1, vertexColors: THREE.VertexColors } );
-    this.material = new THREE.MeshLambertMaterial( {color: 0x586e75, vertexColors: THREE.VertexColors } );
+    this.material = new THREE.MeshLambertMaterial( {color: 0x8F8E8E, vertexColors: THREE.VertexColors } );
     this.mesh = new THREE.Mesh(this.geometry, this.material);
     this.mesh.position.set(x,y,z);
     this.rotationFraction = 0; //keeping track of where it is in its rotation.

@@ -14,7 +14,7 @@ class Peg {
     this.x = x;
     this.y = y;
     this.z = z;
-    this.color = {normal:0x6fa1a1, collision:0xdc322f};
+    this.color = {normal:0x6c71c4, collision:0xdc322f};
     this.geometry = new THREE.BoxGeometry( this.width, this.height, this.depth );
     this.material = new THREE.MeshLambertMaterial( {color: this.color.normal} );
     this.mesh = new THREE.Mesh( this.geometry, this.material );
