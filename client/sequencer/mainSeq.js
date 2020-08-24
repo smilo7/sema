@@ -85,7 +85,7 @@ class MainSeq {
     this.renderer.setSize (width, height);
     this.scene = new THREE.Scene();
 
-		//this.testCylinders();
+		this.testCylinders();
 
     this.setCamera(width, height);
     this.lights();
@@ -129,14 +129,33 @@ class MainSeq {
     });
 
     closeCylinderMenu.addEventListener("click", e=> {
+      //make menu invisible
+      cylinderMenu.style.display = "none";
+    });
+
+    saveCylinderMenu.addEventListener("click", e=> {
       //save settings
       this.cylinderUsingMenu.rotationSpeed = rotationCylinderMenu.value;
       //make menu invisible
       cylinderMenu.style.display = "none";
     });
 
+    deleteCylinderMenu.addEventListener("click", e=> {
+      //make menu invisible
+      cylinderMenu.style.display = "none";
+      this.deleteCylinder(this.cylinderUsingMenu);
+    });
+
     //event handler for close pegMenu button
     closePegMenu.addEventListener("click", e=> {
+      //make menu invisible
+      pegMenu.style.display = "none";
+    });
+
+
+
+    //event handler for close pegMenu button
+    savePegMenu.addEventListener("click", e=> {
       //save settings
       this.pegUsingMenu.trigger = triggerPegMenu.checked;
       this.pegUsingMenu.chID = channelPegMenu.value;
@@ -145,12 +164,29 @@ class MainSeq {
       pegMenu.style.display = "none";
     });
 
+    deletePegMenu.addEventListener("click", e=> {
+      //make menu invisible
+      pegMenu.style.display = "none";
+      this.cylinders.forEach( (cylinder) => {
+        console.log(cylinder.getPeg(this.pegUsingMenu.mesh.uuid));
+        if (cylinder.getPeg(this.pegUsingMenu.mesh.uuid) !== undefined){
+          //remove peg from cylinders list
+          console.log(this.pegUsingMenu);
+          cylinder.deletePeg(this.pegUsingMenu);
+        }
+      });
+
+    });
+
+
     closeCreateCylinderMenu.addEventListener("click", e=> {
       //make menu invisible
       createCylinderMenu.style.display = "none";
       this.doRollover = true;
       this.rolloverCylinder.material.color.setHex(0xff0000);
     });
+
+
 
     saveCreateCylinderMenu.addEventListener("click", e=> {
       let height = heightCreateCylinderMenu.value;
@@ -434,6 +470,18 @@ class MainSeq {
       meshes.push(peg.mesh);
     });
     return meshes;
+  }
+
+  deleteCylinder(cylinder){
+    this.cylinders.forEach((each, index) => {
+      if (cylinder === each){
+        this.cylinders.splice(index, 1);
+        this.scene.remove(cylinder.mesh);
+        cylinder.mesh.geometry.dispose();
+        cylinder.mesh.material.dispose();
+        cylinder.mesh = undefined;
+      }
+    });
   }
 
   collisionCheck(){

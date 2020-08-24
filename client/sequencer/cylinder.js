@@ -105,6 +105,18 @@ class Cylinder {
     return found
   }
 
+  deletePeg(peg){
+    this.pegs.forEach((each, index) => {
+      if (peg === each){
+        this.pegs.splice(index, 1); //remove from array
+        this.mesh.remove(peg.mesh);
+        peg.mesh.geometry.dispose();
+        peg.mesh.material.dispose();
+        peg.mesh = undefined;
+      }
+    });
+  }
+
   getPegList(){
     return this.pegs;
   }

@@ -206,6 +206,13 @@
 	<input type="textbox" id="channelPegMenu" name="channelPegMenu" maxlength="2" size="1">
 	<label for="signalPegMenu">Signal</label>
 	<input type="textbox" id="signalPegMenu" name="signalPegMenu" maxlength="3" size="3">
+	<button id="savePegMenu">
+		Save
+	</button>
+	<hr>
+	<button id="deletePegMenu">
+		Delete Peg
+	</button>
 </div>
 
 <div id="cylinderMenu" style="position:absolute;display:none;background-color:white;font-family:monospace">
@@ -217,6 +224,13 @@
 
 	<label for="rotationCylinderMenu">speed</label>
 	<input type="textbox" id="rotationCylinderMenu" name="rotationCylinderMenu" maxlength="3" size="3">
+	<button id="saveCylinderMenu">
+		Save
+	</button>
+	<hr>
+	<button id="deleteCylinderMenu">
+		Delete Cylinder
+	</button>
 </div>
 
 <div id="createCylinderMenu" style="position:absolute;display:none;background-color:white;font-family:monospace">
