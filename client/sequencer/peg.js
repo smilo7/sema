@@ -14,7 +14,7 @@ class Peg {
     this.x = x;
     this.y = y;
     this.z = z;
-    this.color = {normal:0x6fa1a1, collision:0xFF0000};
+    this.color = {normal:0x6fa1a1, collision:0xdc322f};
     this.geometry = new THREE.BoxGeometry( this.width, this.height, this.depth );
     this.material = new THREE.MeshLambertMaterial( {color: this.color.normal} );
     this.mesh = new THREE.Mesh( this.geometry, this.material );
@@ -121,6 +121,7 @@ class Peg {
         collisionObj.material.color.setHex(this.color.collision);
         //add to list of already hit pegs so it doesnt trigger again
         this.alreadyHitList.push(collisionObj.uuid);
+        //collision = false;
       }
 
     }

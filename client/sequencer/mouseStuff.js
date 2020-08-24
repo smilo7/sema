@@ -8,31 +8,30 @@ export class PickHelper {
 	constructor(){
 		this.raycaster = new THREE.Raycaster();
 		this.pickedObject = null;
-		this.pickedObjectSavedColor = 0;
+		this.hoverObject = null;
+		this.hoverObjectSavedColor = 0;
 		this.faceIdx1 = -1, this.faceIdx2 = -1; //selected face ids
-		this.pickedFace = null;
-		this.pickedFaceSavedColor = new THREE.Color(0x97abcc);
+		this.hoverFace = null;
+		this.hoverFaceSavedColor = new THREE.Color(0x6fa1a1);
     this.selectionColor = new THREE.Color( 0xFF6347 );
 	}
 
   //for changing the colour of the cylinder faces upon the mouse hovering
-	pick(normalisedPosition, scene, camera){
+	hover(normalisedPosition, scene, camera){
 
-		// restore the color if there is a picked object
-	  if (this.pickedObject != null && this.pickedObject.geometry.type == 'CylinderGeometry') {
-			//console.log(this.pickedObjectSavedColor);
-			setFaceColor(this.faceIdx1, this.pickedObjectSavedColor, this.pickedObject);
-			setFaceColor(this.faceIdx2, this.pickedObjectSavedColor, this.pickedObject);
-			//this.pickedObject.material.emissive.setHex(this.pickedObjectSavedColor);
-			this.pickedObject.material.color.setHex(this.pickedObjectSavedColor);
-			//this.pickedObject.geometry.faces[this.faceIdx1];
+		// restore the color if there is a hover object
+	  if (this.hoverObject != null && this.hoverObject.geometry.type == 'CylinderGeometry') {
+			//console.log(this.hoverObjectSavedColor);
+			setFaceColor(this.faceIdx1, this.hoverFaceSavedColor, this.hoverObject);
+			setFaceColor(this.faceIdx2, this.hoverFaceSavedColor, this.hoverObject);
+			//this.hoverObject.material.emissive.setHex(this.hoverObjectSavedColor);
+			this.hoverObject.material.color.setHex(this.hoverObjectSavedColor);
+			//this.hoverObject.geometry.faces[this.faceIdx1];
 
-	    this.pickedObject = null;
-			//this.faceIdx1 = -1;
-			//this.faceIdx2 = -1;
+	    this.hoverObject = null;
+			this.faceIdx1 = -1;
+			this.faceIdx2 = -1;
 		}
-
-
 
 
 		this.raycaster.setFromCamera(normalisedPosition, camera)
@@ -40,27 +39,27 @@ export class PickHelper {
     const intersectedObjects = this.raycaster.intersectObjects(scene.children);
     if (intersectedObjects.length > 0) {
 			// pick the first object. It's the closest one
-      this.pickedObject = intersectedObjects[0].object;
+      this.hoverObject = intersectedObjects[0].object;
 			//if its a cylinder
-			if (this.pickedObject.geometry.type === 'CylinderGeometry'){
+			if (this.hoverObject.geometry.type === 'CylinderGeometry'){
 				//get and store the face indexes
 				this.faceIdx1 = intersectedObjects[0].faceIndex;
 				this.faceIdx2 = this.faceIdx1 % 2 === 0 ? this.faceIdx1 + 1: this.faceIdx1 - 1;
 				//save face color
-				this.pickedFaceSavedColor = new THREE.Color(this.pickedObject.geometry.faces[this.faceIdx1].color.getHex());
+				this.hoverFaceSavedColor = new THREE.Color(this.hoverObject.geometry.faces[this.faceIdx1].color.getHex());
 
-				//console.log(this.pickedObject.geometry.faces[this.faceIdx1].vertexNormals);
-				//makeShape(this.pickedObject.geometry.faces[this.faceIdx1].vertexNormals);
+				//console.log(this.hoverObject.geometry.faces[this.faceIdx1].vertexNormals);
+				//makeShape(this.hoverObject.geometry.faces[this.faceIdx1].vertexNormals);
 
 
-				setFaceColor(this.faceIdx1, this.selectionColor, this.pickedObject);
-				setFaceColor(this.faceIdx2, this.selectionColor, this.pickedObject);
+				setFaceColor(this.faceIdx1, this.selectionColor, this.hoverObject);
+				setFaceColor(this.faceIdx2, this.selectionColor, this.hoverObject);
 	      // save its color
-	      this.pickedObjectSavedColor = this.pickedObject.material.color.getHex();
-				//this.pickedObjectSavedColor = this.pickedObject.material.emissive.getHex();
+	      this.hoverObjectSavedColor = this.hoverObject.material.color.getHex();
+				//this.hoverObjectSavedColor = this.hoverObject.material.emissive.getHex();
 	      // set its emissive color to yellow
-				//this.pickedObject.material.emissive.setHex(0x97abcc);
-				this.pickedObject.material.color.setHex(0x97abcc);
+				//this.hoverObject.material.emissive.setHex(0x97abcc);
+				this.hoverObject.material.color.setHex(0x97abcc);
 			}
     }
 	}

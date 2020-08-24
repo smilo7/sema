@@ -149,6 +149,7 @@ class MainSeq {
       //make menu invisible
       createCylinderMenu.style.display = "none";
       this.doRollover = true;
+      this.rolloverCylinder.material.color.setHex(0xff0000);
     });
 
     saveCreateCylinderMenu.addEventListener("click", e=> {
@@ -159,6 +160,7 @@ class MainSeq {
       this.constructCylinderFromMenu(height, radius, segments);
       //make menu invisible
       createCylinderMenu.style.display = "none";
+      this.rolloverCylinder.material.color.setHex(0xff0000);
     });
 
 
@@ -307,6 +309,7 @@ class MainSeq {
 
     //freeze the rollover, so that menu will create cylinder at correct location
     this.doRollover = false;
+    this.rolloverCylinder.material.color.setHex(0x008000); //set to green
 
     let rect = this.renderer.domElement.getBoundingClientRect();
 
@@ -339,7 +342,7 @@ class MainSeq {
 
     //this.communicator.reset();
     this.controls.update();
-		this.pickHelper.pick(this.pickPosition, this.scene, this.camera); //mouse for hovering on cylinder faces
+		this.pickHelper.hover(this.pickPosition, this.scene, this.camera); //mouse for hovering on cylinder faces
 
     this.rotateAll(delta);
 

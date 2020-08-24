@@ -101,7 +101,7 @@ class AudioEngine {
       }
     });
     this.messaging.subscribe("sequencerTrigger", e => {
-      console.log("Recieved in audio engine", e);
+      //console.log("Recieved in audio engine", e);
       let channel = e.channel;
       if (this.sabs[channel] !== undefined) { //check channel (sab) exists
         this.sabs[channel].rb.push(new Float32Array([e.signal])); //send off the signal to the correct sab channel

@@ -13,13 +13,13 @@ class Communicator {
 	}
 
 	send(signal, channel){
-		console.log("SENDING SIGNAL", signal, channel);
+		//console.log("SENDING SIGNAL", signal, channel);
 		//send a dictionary of signal and channel
 		this.messaging.publish("sequencerTrigger", {signal:signal, channel:channel});
 	}
 
 	reset(channel){
-		console.log("RESETTING");
+		//console.log("RESETTING");
 		this.messaging.publish("sequencerTrigger", {signal:0, channel:channel});
 	}
 

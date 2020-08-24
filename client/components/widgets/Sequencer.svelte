@@ -199,12 +199,12 @@
     x
   </button>
 	<hr>
-	<label for="triggerPegMenu">🔊</label>
+	<label for="triggerPegMenu">Sound 🔊</label>
 	<input type="checkbox" id="triggerPegMenu" name="triggerPegMenu">
 	<br>
-	<label for="channelPegMenu">🎚</label>
+	<label for="channelPegMenu">Channel 🎚</label>
 	<input type="textbox" id="channelPegMenu" name="channelPegMenu" maxlength="2" size="1">
-	<label for="signalPegMenu">signal</label>
+	<label for="signalPegMenu">Signal</label>
 	<input type="textbox" id="signalPegMenu" name="signalPegMenu" maxlength="3" size="3">
 </div>
 
