@@ -4,7 +4,7 @@ var THREE = require('three');
 class NudgeButton{
   constructor(scene, x, y, z, height){
     var textureLoader = new THREE.TextureLoader();
-    this.spriteMap = textureLoader.load('images/ball.png');
+    this.spriteMap = textureLoader.load('https://raw.githubusercontent.com/smilo7/sema/master/client/sequencer/images/arrow.png');
 
     // this.spriteMap = new THREE.TextureLoader().load( 'images/ball.png' );
     this.spriteMaterial = new THREE.SpriteMaterial( { map: this.spriteMap, color:'#69f' } );
