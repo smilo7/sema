@@ -1,6 +1,6 @@
 var THREE = require('three');
 import { PubSub } from '../messaging/pubSub.js';
-
+import {setFaceColor} from '../sequencer/utils.js';
 
 class Peg {
   constructor(width, height, depth, x, y, z, face, scene){
@@ -24,7 +24,6 @@ class Peg {
     this.currentCollisionUUID = null;
     this.alreadyHitList = []; //this should get cleared every rotation
     this.cylinderRotation = 0;
-
     //add to scene
     //this.scene.add( this.mesh );
     //set position
@@ -34,9 +33,9 @@ class Peg {
     this.mesh.geometry.computeBoundingBox();
     this.messaging = new PubSub();
 
-
     //objects for collision so they dont get recreated all the time
     this.originPoint = new THREE.Vector3(0,0,0);
+    //this.raycaster = new THREE.Raycaster();
   }
 
   setPos(){
@@ -90,6 +89,7 @@ class Peg {
 
       //TODO move object creation outside of loop and reuse it. will be much more efficient.
   		var ray = new THREE.Raycaster( this.originPoint, directionVector.clone().normalize(), 0, directionVector.length() );
+
 
   		var intersectedObjects = ray.intersectObjects( collidables );
       if (intersectedObjects.length > 0){ //if there is atleast one collision with the ray

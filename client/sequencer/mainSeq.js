@@ -69,6 +69,7 @@ class MainSeq {
   setCanvas(canvas){
     this.canvas = canvas;
     //console.log(canvas);
+
   }
 
   setCamera(width, height){
@@ -85,7 +86,7 @@ class MainSeq {
     this.renderer.setSize (width, height);
     this.scene = new THREE.Scene();
 
-		this.testCylinders();
+		//this.testCylinders();
 
     this.setCamera(width, height);
     this.lights();
@@ -93,6 +94,13 @@ class MainSeq {
     this.rolloverCylinder = this.makeRolloverCylinder();
     makeGrid(this.scene);
 		this.controls = new OrbitControls (this.camera, this.renderer.domElement);
+    this.controls.enableKeys = false;
+
+
+    this.renderer.domElement.addEventListener("mousedown", e => {
+      console.log(event.target);
+
+    });
 
     //listener for left click
     this.renderer.domElement.addEventListener("mousedown", e => {
@@ -207,6 +215,7 @@ class MainSeq {
     // });
 
     console.log(this.canvas);
+
   }
 
   makeFloor(){
@@ -247,22 +256,28 @@ class MainSeq {
   //FOR PLACING PEGS
   leftClick(){
     let raycastReturn = this.pickHelper.place(this.pickPosition, this.scene, this.camera);
-    let selectedUUID = raycastReturn[0];
-    let middleOfSelectedFace = raycastReturn[1]; //coords to spawn the peg at
-    let rotateToFace = raycastReturn[2];
-    //loop through list of cylinders
-    //TODO replace this with a dict so its faster
-    for (let i=0;i<this.cylinders.length;i++){
-      if (selectedUUID === this.cylinders[i].uuid){
-        let selectedCylinder = this.cylinders[i];
-        //console.log("clicked", this.cylinders[i].uuid);
-        //console.log(middleOfSelectedFace);
-        selectedCylinder.addPeg(middleOfSelectedFace.x, middleOfSelectedFace.y, middleOfSelectedFace.z, rotateToFace);
-        //update list of getCollidables
-        this.collidables = this.getCollidables();
-        //console.log(this.collidables);
+
+    if (raycastReturn !== undefined){
+
+      let selectedUUID = raycastReturn[0];
+      let middleOfSelectedFace = raycastReturn[1]; //coords to spawn the peg at
+      let rotateToFace = raycastReturn[2];
+      //loop through list of cylinders
+      //TODO replace this with a dict so its faster
+      for (let i=0;i<this.cylinders.length;i++){
+        if (selectedUUID === this.cylinders[i].uuid){
+          let selectedCylinder = this.cylinders[i];
+          //console.log("clicked", this.cylinders[i].uuid);
+          //console.log(middleOfSelectedFace);
+          selectedCylinder.addPeg(middleOfSelectedFace.x, middleOfSelectedFace.y, middleOfSelectedFace.z, rotateToFace);
+          //update list of getCollidables
+          this.collidables = this.getCollidables();
+          //console.log(this.collidables);
+        }
       }
+
     }
+
   }
 
   rightClickCylinder(){

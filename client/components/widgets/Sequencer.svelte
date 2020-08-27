@@ -87,12 +87,14 @@
 	window.addEventListener('mousemove', setPickPosition);
 	window.addEventListener('mouseout', clearPickPosition);
 	window.addEventListener('mouseleave', clearPickPosition);
-	window.addEventListener('keydown', e => {
+
+	document.addEventListener('keydown', e => {
 		if (e.keyCode == 32){
 			mainSeq.playPause();
 		}
 	});
-	//window.addEventListener('mousedown', setPickPosition);
+	window.addEventListener('mousedown', setPickPosition);
+
 
   onMount(async () => {
     // Request the creation of an WAAPI analyser to the Audio Engine
@@ -152,6 +154,8 @@
     isRendering = false;
    	return () => cancelAnimationFrame(frame);
 	})
+
+
 
 </script>
 
@@ -223,7 +227,7 @@
 	<hr>
 
 	<label for="rotationCylinderMenu">speed</label>
-	<input type="textbox" id="rotationCylinderMenu" name="rotationCylinderMenu" maxlength="3" size="3">
+	<input type="number" id="rotationCylinderMenu" name="rotationCylinderMenu" maxlength="3" size="3">
 	<button id="saveCylinderMenu">
 		Save
 	</button>
