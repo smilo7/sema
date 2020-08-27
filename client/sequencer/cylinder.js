@@ -22,7 +22,7 @@ class Cylinder {
     this.mesh = new THREE.Mesh(this.geometry, this.material);
     this.mesh.position.set(x,y,z);
     this.rotationFraction = 0; //keeping track of where it is in its rotation.
-    this.nudegButton = new NudgeButton(this.scene, x, y, z, height);
+    this.nudgeButtons = {left: new NudgeButton(this.scene, x, y, z, height, 'left'), right:new NudgeButton(this.scene, x, y, z, height, 'right')};
 
     let helper = new FaceNormalsHelper( this.mesh, 2, 0x00ff00, 1 );
     //edges
