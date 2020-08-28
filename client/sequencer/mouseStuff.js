@@ -103,6 +103,21 @@ export class PickHelper {
     }
   }
 
+	nudgeButtonClick(normalisedPosition, objects, camera){
+		this.raycaster.setFromCamera(normalisedPosition, camera)
+		// get the list of objects the ray intersected
+    const intersectedObjects = this.raycaster.intersectObjects(objects);
+    if (intersectedObjects.length > 0) {
+			// pick the first object. It's the closest one
+      this.pickedObject = intersectedObjects[0].object;
+			if (this.pickedObject.type == "Sprite"){
+				console.log(this.pickedObject);
+				return this.pickedObject.uuid;
+			}
+		}
+		return undefined;
+	}
+
 	//return UUID  of peg if right clicked
 	rightClickMenu(normalisedPosition, objects, camera){
 		this.raycaster.setFromCamera(normalisedPosition, camera)

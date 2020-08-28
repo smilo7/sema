@@ -97,19 +97,22 @@ class MainSeq {
     this.controls.enableKeys = false;
 
 
-    this.renderer.domElement.addEventListener("mousedown", e => {
-      console.log(event.target);
-
-    });
+    //
+    // this.renderer.domElement.addEventListener("mousedown", e => {
+    //   console.log(event.target);
+    //
+    // });
 
     //listener for left click
     this.renderer.domElement.addEventListener("mousedown", e => {
       if (e.button == 0){
         this.leftClick();
+        this.leftClickNudgeButtons();
       }
     });
 
     //right click menus
+    //and for when nudge is no longer clicked
     this.renderer.domElement.addEventListener("mouseup", e => {
       //if its right click
       if (e.button == 2){
@@ -125,6 +128,13 @@ class MainSeq {
         }
 
       }
+
+      //left click up for nudgeButton
+      if (e.button == 0){
+        console.log("NUDGEBUTTON ASDHJASHDK");
+        this.resetNudgeButtons();
+      }
+
     });
 
     //double click to place cylinder
@@ -278,6 +288,26 @@ class MainSeq {
 
     }
 
+  }
+
+  //deal with raycasts for left click for nudge buttons
+  leftClickNudgeButtons(){
+    let raycastReturn = this.pickHelper.nudgeButtonClick(this.pickPosition, this.scene.children, this.camera);
+    if (raycastReturn !== undefined){
+      this.cylinders.forEach( (each) => {
+        each.nudgeRotation(raycastReturn);
+      });
+    }
+  }
+
+  //when no longer clicking (mouseup) reset nudge button
+  resetNudgeButtons(){
+    let raycastReturn = this.pickHelper.nudgeButtonClick(this.pickPosition, this.scene.children, this.camera);
+    if (raycastReturn !== undefined){
+      this.cylinders.forEach( (each) => {
+        each.resetNudgeRotation(raycastReturn);
+      });
+    }
   }
 
   rightClickCylinder(){

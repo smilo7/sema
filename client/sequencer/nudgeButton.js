@@ -3,7 +3,7 @@ import {PickHelper} from '../sequencer/mouseStuff.js';
 
 class NudgeButton{
   constructor(scene, x, y, z, height, direction){
-
+    this.value = 1;
     this.direction = direction;
     this.spriteMap;
     this.setSpriteMapForDirection();

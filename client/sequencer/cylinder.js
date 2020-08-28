@@ -22,6 +22,7 @@ class Cylinder {
     this.mesh = new THREE.Mesh(this.geometry, this.material);
     this.mesh.position.set(x,y,z);
     this.rotationFraction = 0; //keeping track of where it is in its rotation.
+    this.rotationNudge = 1;
     this.nudgeButtons = {left: new NudgeButton(this.scene, x, y, z, height, 'left'), right:new NudgeButton(this.scene, x, y, z, height, 'right')};
 
     let helper = new FaceNormalsHelper( this.mesh, 2, 0x00ff00, 1 );
@@ -55,7 +56,7 @@ class Cylinder {
 
     //this.pegs.push(new Peg(3,3,10, x*2, y, z*2, face, this.scene));
     let dimensions = this.calcFaceDimensions(face);
-    let depth = this.radius*2;
+    let depth = this.radius*2;1
     this.pegs.push(new Peg(dimensions.width,dimensions.height,depth, x*(depth/this.radius), y, z*(depth/this.radius), face, this.scene));
     //add peg as child of cylinder mesh
     let newPeg = this.pegs[this.pegs.length-1]
@@ -129,9 +130,9 @@ class Cylinder {
   }
 
   rotate(delta){
-    this.mesh.rotation.y += this.rotationSpeed * delta;
+    this.mesh.rotation.y += this.rotationSpeed * this.rotationNudge * delta;
 
-    this.rotationFraction += this.rotationSpeed * delta;
+    this.rotationFraction += this.rotationSpeed * this.rotationNudge * delta;
 
     //reset peg hitlist every rotation
     if (this.rotationFraction >= 1){
@@ -141,6 +142,27 @@ class Cylinder {
       });
     }
 
+  }
+
+  //speed it up or down by 10%
+  nudgeRotation(uuid){
+    let amount = this.rotationSpeed / 10;
+    if (this.nudgeButtons.left.sprite.uuid == uuid){
+      console.log("Left");
+      this.rotationNudge = 1 - amount;
+
+    } else if (this.nudgeButtons.right.sprite.uuid == uuid){
+      console.log("right");
+      this.rotationNudge = 1 + amount;
+    }
+  }
+
+  //reset so there is no nudge value.
+  resetNudgeRotation(uuid){
+    //this.rotationNudge = 1;
+    if (this.nudgeButtons.left.sprite.uuid == uuid || this.nudgeButtons.right.sprite.uuid == uuid){
+      this.rotationNudge = 1;
+    }
   }
 
 
