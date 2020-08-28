@@ -7,6 +7,9 @@
   ],
   "version": "0.5.0",
   "description": "Sema, a live coding language design and performance playground",
+  "engines": {
+    "npm": "14.x"
+  },
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
     "dev": "run-p watch:routify watch:webpack",

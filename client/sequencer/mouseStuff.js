@@ -60,6 +60,7 @@ export class PickHelper {
 	      // set its emissive color to yellow
 				//this.hoverObject.material.emissive.setHex(0x97abcc);
 				this.hoverObject.material.color.setHex(0x839496);
+
 			}
     }
 	}
