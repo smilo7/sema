@@ -121,6 +121,15 @@ class Cylinder {
     });
   }
 
+  deleteNudgeButtons(){
+    let values = Object.values(this.nudgeButtons);
+    values.forEach( (each) =>{
+      this.scene.remove(each.sprite);
+      each.sprite.material.dispose();
+      each.sprite = undefined;
+    });
+  }
+
   getPegList(){
     return this.pegs;
   }
@@ -150,10 +159,11 @@ class Cylinder {
     if (this.nudgeButtons.left.sprite.uuid == uuid){
       console.log("Left");
       this.rotationNudge = 1 - amount;
-
+      this.nudgeButtons.left.switchIconDoubleArrow(); //change texture
     } else if (this.nudgeButtons.right.sprite.uuid == uuid){
       console.log("right");
       this.rotationNudge = 1 + amount;
+      this.nudgeButtons.right.switchIconDoubleArrow();
     }
   }
 
@@ -162,6 +172,8 @@ class Cylinder {
     //this.rotationNudge = 1;
     if (this.nudgeButtons.left.sprite.uuid == uuid || this.nudgeButtons.right.sprite.uuid == uuid){
       this.rotationNudge = 1;
+      this.nudgeButtons.left.switchIconSingleArrow();
+      this.nudgeButtons.right.switchIconSingleArrow();
     }
   }
 

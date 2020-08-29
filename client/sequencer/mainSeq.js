@@ -455,10 +455,10 @@ class MainSeq {
       if (deltaCount >= 0.016){
         deltaCount = 0;
 
-        this.communicator.reset(this.collisionEvent.channel); //send 0 to audioEngine
-        this.communicator.reset(0);
-        this.communicator.reset(1);
-        this.communicator.reset(2);
+        //this.communicator.reset(this.collisionEvent.channel); //send 0 to audioEngine
+        for (let i=0; i<=32; i++){
+          this.communicator.reset(i);
+        }
         //this.communicator.reset(this.collisionEvent.channel);
 
         this.collisionEvent.bool = false; //finish collision event
@@ -520,6 +520,7 @@ class MainSeq {
   deleteCylinder(cylinder){
     this.cylinders.forEach((each, index) => {
       if (cylinder === each){
+        cylinder.deleteNudgeButtons();
         this.cylinders.splice(index, 1);
         this.scene.remove(cylinder.mesh);
         cylinder.mesh.geometry.dispose();
