@@ -360,7 +360,7 @@ class AudioEngine {
 
 
       //make 64 SAB channels that the pegs can use.
-      for (let i=0; i<=32; i++){
+      for (let i=0; i<=15; i++){
         this.createSAB(i, "sequencerTrigger", 1, this.audioWorkletNode.port);
       }
 

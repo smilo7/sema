@@ -178,6 +178,7 @@ class MainSeq {
       this.pegUsingMenu.trigger = triggerPegMenu.checked;
       this.pegUsingMenu.chID = channelPegMenu.value;
       this.pegUsingMenu.signal = signalPegMenu.value;
+      this.pegUsingMenu.updateColor();
       //make menu invisible
       pegMenu.style.display = "none";
     });
@@ -456,7 +457,7 @@ class MainSeq {
         deltaCount = 0;
 
         //this.communicator.reset(this.collisionEvent.channel); //send 0 to audioEngine
-        for (let i=0; i<=32; i++){
+        for (let i=0; i<=15; i++){
           this.communicator.reset(i);
         }
         //this.communicator.reset(this.collisionEvent.channel);

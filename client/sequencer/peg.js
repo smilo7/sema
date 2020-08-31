@@ -14,12 +14,12 @@ class Peg {
     this.x = x;
     this.y = y;
     this.z = z;
-    this.color = {normal:0x6c71c4, collision:0xdc322f};
+    this.colorOptions = this.getColorOptions();
+    this.color = {normal:this.colorOptions[this.chID], collision:0xdc322f};
     this.geometry = new THREE.BoxGeometry( this.width, this.height, this.depth );
     this.material = new THREE.MeshLambertMaterial( {color: this.color.normal} );
     this.mesh = new THREE.Mesh( this.geometry, this.material );
     this.face = face;
-    this.code = '';
     this.scene = scene;
     this.currentCollisionUUID = null;
     this.alreadyHitList = []; //this should get cleared every rotation
@@ -48,6 +48,30 @@ class Peg {
     return this.mesh;
   }
 
+  getColorOptions(){
+    let options = [];
+    options.push(0x6c71c4);
+    options.push(0xF5CB5C);
+    options.push(0xEF9CDA);
+    options.push(0x95D9C3);
+    options.push(0xA4F9C8);
+    options.push(0xA7FFF6);
+    options.push(0xF94144);
+    options.push(0xF3722C);
+    options.push(0xF8961E);
+    options.push(0xF9844A);
+    options.push(0xF9C74F);
+    options.push(0x90BE6D);
+    options.push(0x43AA8B);
+    options.push(0x4D908E);
+    options.push(0x577590);
+    options.push(0x277DA1);
+    return options;
+  }
+
+  updateColor(){
+    this.material.color.setHex(this.colorOptions[this.chID]);
+  }
   rotateToFace(){
     let normal = this.face.normal.applyMatrix4(this.mesh.parent.matrix);
     normal = normal.applyMatrix4(this.mesh.matrix);
