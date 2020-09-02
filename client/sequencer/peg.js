@@ -15,13 +15,14 @@ class Peg {
     this.y = y;
     this.z = z;
     this.colorOptions = this.getColorOptions();
-    this.color = {normal:this.colorOptions[this.chID], collision:0xdc322f};
+    this.color = {normal:this.getColor(), collision:0xdc322f};
     this.geometry = new THREE.BoxGeometry( this.width, this.height, this.depth );
     this.material = new THREE.MeshLambertMaterial( {color: this.color.normal} );
     this.mesh = new THREE.Mesh( this.geometry, this.material );
     this.face = face;
     this.scene = scene;
     this.currentCollisionUUID = null;
+    this.raycaster = new THREE.Raycaster(); //raycaster for collision detection
     this.alreadyHitList = []; //this should get cleared every rotation
     this.cylinderRotation = 0;
     //add to scene
@@ -69,9 +70,15 @@ class Peg {
     return options;
   }
 
+  getColor(){
+    return this.colorOptions[this.chID];
+  }
+
   updateColor(){
     this.material.color.setHex(this.colorOptions[this.chID]);
+    //this.color.normal = this.colorOptions[this.chID];
   }
+
   rotateToFace(){
     let normal = this.face.normal.applyMatrix4(this.mesh.parent.matrix);
     normal = normal.applyMatrix4(this.mesh.matrix);
@@ -99,12 +106,15 @@ class Peg {
 
   collision(collidables){
 
+    this.collisionAnimationReset(); //just incase it wasnt (edge cases like really fast collisions);
+
     this.mesh.getWorldPosition(this.originPoint).clone(); //have to get world pos for it to work properly
 
     let collision = false;
     let collisionObj = null;
     let vertHitCount = 0; //number of vertices that are hit. has to be 2 for a trigger to be sent.
-  	for (var vIndex = 0; vIndex < this.mesh.geometry.vertices.length; vIndex++)
+
+    for (var vIndex = 0; vIndex < this.mesh.geometry.vertices.length; vIndex++)
   	{
 
   		var localVertex = this.mesh.geometry.vertices[vIndex].clone();
@@ -112,8 +122,11 @@ class Peg {
   		var directionVector = globalVertex.sub( this.mesh.position );
 
       //TODO move object creation outside of loop and reuse it. will be much more efficient.
-  		var ray = new THREE.Raycaster( this.originPoint, directionVector.clone().normalize(), 0, directionVector.length() );
-
+  		//var ray = new THREE.Raycaster( this.originPoint, directionVector.clone().normalize(), 0, directionVector.length() );
+      this.raycaster.set(this.originPoint, directionVector.clone().normalize());
+      this.raycaster.near = 0;
+      this.raycaster.far = directionVector.length();
+      var ray = this.raycaster;
 
   		var intersectedObjects = ray.intersectObjects( collidables );
       if (intersectedObjects.length > 0){ //if there is atleast one collision with the ray
@@ -142,7 +155,8 @@ class Peg {
 
       if (collision){ //if its still a valid (new) collision event
         this.sendTrigger();
-        collisionObj.material.color.setHex(this.color.collision);
+        this.collisionAnimation();
+        //collisionObj.material.color.setHex(this.color.collision);
         //add to list of already hit pegs so it doesnt trigger again
         this.alreadyHitList.push(collisionObj.uuid);
         //collision = false;
@@ -151,7 +165,8 @@ class Peg {
     }
 
     if (collisionObj != null && collision == false){ //change colour back to normal
-      collisionObj.material.color.setHex(this.color.normal);
+      this.collisionAnimationReset();
+      //collisionObj.material.color.setHex(this.colorOptions[this.chID]);
     }
       // //check if the collision is with the same peg.
       // if (intersectedObjects[0].object.uuid != this.currentCollisionUUID){
@@ -161,6 +176,16 @@ class Peg {
       //   this.changeColor(collisionObj);
       //   this.currentCollisionUUID = intersectedObjects[0].object.uuid; //set current collision to new collision
       // }
+  }
+
+  collisionAnimation(){
+    this.material.color.setHex(this.color.collision);
+    this.mesh.scale.set(1.2, 1.2, 1.2);
+  }
+
+  collisionAnimationReset(){
+    this.material.color.setHex(this.colorOptions[this.chID]); //set colour to normal
+    this.mesh.scale.set(1,1,1);
   }
 
   resetHitList(){

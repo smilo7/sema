@@ -69,7 +69,6 @@ class MainSeq {
   setCanvas(canvas){
     this.canvas = canvas;
     //console.log(canvas);
-
   }
 
   setCamera(width, height){
@@ -86,7 +85,7 @@ class MainSeq {
     this.renderer.setSize (width, height);
     this.scene = new THREE.Scene();
 
-		//this.testCylinders();
+		this.testCylinders();
 
     this.setCamera(width, height);
     this.lights();
