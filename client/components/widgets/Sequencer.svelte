@@ -260,5 +260,6 @@
 <canvas bind:this={canvas}
         class="canvas"
 				id="glCanvas"
+				oncontextmenu="return false;"
 				>
         </canvas>
