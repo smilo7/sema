@@ -96,6 +96,17 @@ class MainSeq {
     this.controls.enableKeys = false;
 
 
+
+    if (this.canvas.addEventListener) {
+    this.canvas.addEventListener('contextmenu', function (e) {
+      e.preventDefault();
+    }, false);
+    } else {
+    this.canvas.attachEvent('oncontextmenu', function () {
+      window.event.returnValue = false;
+    });
+    }
+
     //
     // this.renderer.domElement.addEventListener("mousedown", e => {
     //   console.log(event.target);
