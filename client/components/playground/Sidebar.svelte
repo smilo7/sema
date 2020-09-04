@@ -167,9 +167,9 @@
         case 'analyser':
           $isAddAnalyserDisabled = false;
           break;
-          case 'sequencer':
-            $isAddSequencerDisabled = false;
-            break;
+        case 'sequencer':
+          $isAddSequencerDisabled = false;
+          break;
         case 'grammarCompileOutput':
         case 'liveCodeParseOutput':
         case 'dspCodeOutput':

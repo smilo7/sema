@@ -97,15 +97,15 @@ class MainSeq {
 
 
 
-    if (this.canvas.addEventListener) {
-    this.canvas.addEventListener('contextmenu', function (e) {
-      e.preventDefault();
-    }, false);
-    } else {
-    this.canvas.attachEvent('oncontextmenu', function () {
-      window.event.returnValue = false;
-    });
-    }
+    // if (document.addEventListener) {
+    // document.addEventListener('contextmenu', function (e) {
+    //   e.preventDefault();
+    // }, false);
+    // } else {
+    // document.attachEvent('oncontextmenu', function () {
+    //   window.event.returnValue = false;
+    // });
+    // }
 
     //
     // this.renderer.domElement.addEventListener("mousedown", e => {
@@ -119,7 +119,7 @@ class MainSeq {
         this.leftClick();
         this.leftClickNudgeButtons();
       }
-    });
+    }, false);
 
     //right click menus
     //and for when nudge is no longer clicked

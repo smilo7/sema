@@ -5,7 +5,7 @@
   import { PubSub } from '../../messaging/pubSub.js';
 
   let messaging = new PubSub();
-	//let stats = require('stats.js');
+
 	//import {init, animate} from '../../sequencer/mainSeq.js';
 	import { MainSeq } from '../../sequencer/mainSeq.js';
 
@@ -48,15 +48,11 @@
 	const renderLoop = () => {
 
     if (isRendering) {
-      frame = requestAnimationFrame(renderLoop);
-      // console.log(`canvas w:${canvas.width} h:${canvas.height}`);
+			mainSeq.setCanvas(canvas);
+			mainSeq.init();
+			//console.log("here", mainSeq.canvas);
+			animate();
 
-      let drawContext = canvas.getContext('2d');
-      drawContext.canvas.width = canvas.offsetWidth;    // needed for 'automatic' resizing the canvas to current size
-      drawContext.canvas.height = canvas.offsetHeight;  // TODO: Optimise by doing this only on canvas resize call
-      drawContext.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
-			//drawContext.fillStyle = "#FF0000";
-			//drawContext.fillRect(0, 0, 150, 75);
       }
     else return;
 	};
@@ -72,7 +68,7 @@
     isRendering = !isRendering;
 
     hasFocus = true;
-    console.log("clickasdasdakjshdkajshd");
+    console.log("click");
     dispatch('change', {
       prop:'hasFocus',
       value: true
@@ -84,22 +80,25 @@
 	//console.log("here", canvas);
 	//console.log("here", mainSeq.canvas);
 
-	window.addEventListener('mousemove', setPickPosition);
-	window.addEventListener('mouseout', clearPickPosition);
-	window.addEventListener('mouseleave', clearPickPosition);
+	window.addEventListener('mousemove', setPickPosition, false);
+	window.addEventListener('mouseout', clearPickPosition, false);
+	window.addEventListener('mouseleave', clearPickPosition, false);
 
 	document.addEventListener('keydown', e => {
 		if (e.keyCode == 32){
 			mainSeq.playPause();
 		}
-	});
-	window.addEventListener('mousedown', setPickPosition);
+	}, false);
+	window.addEventListener('mousedown', setPickPosition, false);
+
+
 
 
   onMount(async () => {
     // Request the creation of an WAAPI analyser to the Audio Engine
     //renderLoop();
 		//mainSeq.getCanvas;
+		//canvas.addEventListener('click', () => toggleRendering(), false);
 		mainSeq.setCanvas(canvas);
 		mainSeq.init();
 		//console.log("here", mainSeq.canvas);
@@ -135,9 +134,6 @@
     mainSeq.pickPosition.y = -100000;
   }
 
-	// stats = new Stats();
-	// stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-	// document.body.appendChild( stats.dom );
 
 	function animate() {
 
@@ -196,7 +192,7 @@
 </style>
 
 
-<div id="pegMenu" style="position:absolute;display:none;background-color:white;font-family:monospace">
+<div id="pegMenu" oncontextmenu="return false;" style="position:absolute;display:none;background-color:white;font-family:monospace">
   <span color="red"><b>Peg Settings</b></span>
 
   <button id="closePegMenu">
@@ -219,7 +215,7 @@
 	</button>
 </div>
 
-<div id="cylinderMenu" style="position:absolute;display:none;background-color:white;font-family:monospace">
+<div id="cylinderMenu" oncontextmenu="return false;" style="position:absolute;display:none;background-color:white;font-family:monospace">
   <span color="red"><b>Cylinder Settings</b></span>
 	<button id="closeCylinderMenu">
     x
@@ -237,7 +233,7 @@
 	</button>
 </div>
 
-<div id="createCylinderMenu" style="position:absolute;display:none;background-color:white;font-family:monospace">
+<div id="createCylinderMenu" oncontextmenu="return false;" style="position:absolute;display:none;background-color:white;font-family:monospace">
   <span color="red"><b>Create Cylinder</b></span>
 	<button id="closeCreateCylinderMenu">
     x
@@ -256,6 +252,8 @@
     Create
   </button>
 </div>
+
+
 
 <canvas bind:this={canvas}
         class="canvas"
