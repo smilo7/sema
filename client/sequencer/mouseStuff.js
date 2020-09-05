@@ -122,7 +122,7 @@ export class PickHelper {
 	rightClickMenu(normalisedPosition, objects, camera){
 		this.raycaster.setFromCamera(normalisedPosition, camera)
 		// get the list of objects the ray intersected
-    const intersectedObjects = this.raycaster.intersectObjects(objects);
+    const intersectedObjects = this.raycaster.intersectObjects(objects, true);
     if (intersectedObjects.length > 0) {
 			// pick the first object. It's the closest one
       this.pickedObject = intersectedObjects[0].object;
@@ -148,7 +148,7 @@ export class PickHelper {
 
 	}
 
-	//handling right clicking on plane
+	//handling double clicking on plane
 	createCylinder(normalisedPosition, object, scene, camera){
 		this.raycaster.setFromCamera(normalisedPosition, camera);
 		const intersectedObjects = this.raycaster.intersectObjects(scene.children);
